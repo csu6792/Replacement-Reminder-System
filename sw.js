@@ -1,9 +1,5 @@
-const CACHE = 'filter-reminder-v3';
-const ASSETS = [
-  './',
-  './index.html',
-  './manifest.json'
-];
+const CACHE = 'filter-reminder-v5';
+const ASSETS = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -20,16 +16,14 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  const req = event.request;
-  if (req.method !== 'GET') return;
-
+  if (event.request.method !== 'GET') return;
   event.respondWith(
-    caches.match(req).then((cached) => {
-      const fetchPromise = fetch(req)
+    caches.match(event.request).then((cached) => {
+      const fetchPromise = fetch(event.request)
         .then((res) => {
           if (res && res.ok) {
             const clone = res.clone();
-            caches.open(CACHE).then((c) => c.put(req, clone));
+            caches.open(CACHE).then((c) => c.put(event.request, clone));
           }
           return res;
         })

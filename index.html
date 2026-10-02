@@ -2,868 +2,306 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#0f172a" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#f2f2f7" />
   <meta name="description" content="濾芯更換提醒系統 - 專業離線 PWA，最多支援 10 道過濾器" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="濾芯提醒" />
   <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="format-detection" content="telephone=no" />
   <title>濾芯更換提醒系統</title>
   <link rel="manifest" href="./manifest.json" />
-  <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI0IiBmaWxsPSIjMWUzYTVmIi8+PGNpcmNsZSBjeD0iNjQiIGN5PSI2NCIgcj0iMjgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzNiODJmNiIgc3Ryb2tlLXdpZHRoPSI4Ii8+PHBhdGggZD0iTTY0IDM2djE2TTY0IDc2djE2TTM2IDY0aDE2TTc2IDY0aDE2IiBzdHJva2U9IiMzYjgyZjYiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI0IiBmaWxsPSIjMDA3QUZGIi8+PGNpcmNsZSBjeD0iNjQiIGN5PSI2NCIgcj0iMjgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSI4Ii8+PHBhdGggZD0iTTY0IDM2djE2TTY0IDc2djE2TTM2IDY0aDE2TTc2IDY0aDE2IiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+" />
+  <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI0IiBmaWxsPSIjMDA3QUZGIi8+PGNpcmNsZSBjeD0iNjQiIGN5PSI2NCIgcj0iMjgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSI4Ii8+PHBhdGggZD0iTTY0IDM2djE2TTY0IDc2djE2TTM2IDY0aDE2TTc2IDY0aDE2IiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+" />
   <style>
     :root {
-      --bg-primary: #0b1220;
-      --bg-secondary: #111827;
-      --bg-card: #1a2332;
-      --bg-card-hover: #1f2a3d;
-      --border: #2a3649;
-      --border-light: #334155;
-      --text-primary: #f1f5f9;
-      --text-secondary: #94a3b8;
-      --text-muted: #64748b;
-      --accent: #3b82f6;
-      --accent-hover: #2563eb;
-      --accent-soft: rgba(59, 130, 246, 0.15);
-      --success: #10b981;
-      --success-soft: rgba(16, 185, 129, 0.15);
-      --warning: #f59e0b;
-      --warning-soft: rgba(245, 158, 11, 0.15);
-      --danger: #ef4444;
-      --danger-soft: rgba(239, 68, 68, 0.15);
+      --bg: #f2f2f7;
+      --surface: #ffffff;
+      --surface-secondary: #f2f2f7;
+      --separator: rgba(60, 60, 67, 0.12);
+      --separator-opaque: #c6c6c8;
+      --label: #000000;
+      --label-secondary: rgba(60, 60, 67, 0.6);
+      --label-tertiary: rgba(60, 60, 67, 0.3);
+      --blue: #007aff;
+      --blue-soft: rgba(0, 122, 255, 0.12);
+      --green: #34c759;
+      --green-soft: rgba(52, 199, 89, 0.14);
+      --orange: #ff9500;
+      --orange-soft: rgba(255, 149, 0, 0.14);
+      --red: #ff3b30;
+      --red-soft: rgba(255, 59, 48, 0.12);
       --radius: 12px;
-      --radius-sm: 8px;
-      --shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
-      --font: "Inter", "Noto Sans TC", "Microsoft JhengHei", system-ui, -apple-system, sans-serif;
+      --radius-lg: 16px;
+      --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", "Noto Sans TC", system-ui, sans-serif;
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
       --safe-left: env(safe-area-inset-left, 0px);
       --safe-right: env(safe-area-inset-right, 0px);
+      --header-h: 52px;
     }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html {
-      height: 100%;
-      -webkit-text-size-adjust: 100%;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      position: fixed; inset: 0; width: 100%; height: 100%; overflow: hidden;
+      overscroll-behavior: none; touch-action: manipulation;
+      background: var(--bg); color: var(--label); font-family: var(--font); line-height: 1.4;
+      -webkit-font-smoothing: antialiased; user-select: none; -webkit-user-select: none;
+      -webkit-touch-callout: none; -webkit-text-size-adjust: 100%;
     }
-
-    body {
-      min-height: 100%;
-      font-family: var(--font);
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      overflow-x: hidden;
-      line-height: 1.5;
-    }
-
-    /* Subtle static gradient background - no animation */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      background:
-        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(37, 99, 235, 0.12), transparent),
-        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(30, 58, 95, 0.2), transparent),
-        var(--bg-primary);
-    }
-
+    input, textarea, select { user-select: text; -webkit-user-select: text; }
     .app {
-      position: relative;
-      z-index: 1;
-      min-height: 100vh;
-      min-height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: calc(20px + var(--safe-top)) calc(16px + var(--safe-right)) calc(40px + var(--safe-bottom)) calc(16px + var(--safe-left));
+      display: flex; flex-direction: column; width: 100%; height: 100%;
+      max-width: 680px; margin: 0 auto; overflow: hidden;
+      padding-left: var(--safe-left); padding-right: var(--safe-right);
     }
-
-    /* Header */
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px 16px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border);
+    .app-header {
+      flex-shrink: 0; padding-top: var(--safe-top);
+      background: rgba(242, 242, 247, 0.86);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 0.5px solid var(--separator); z-index: 20;
     }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
+    .app-header-inner {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      min-height: var(--header-h); padding: 8px 16px 10px;
     }
-
+    .brand { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
     .brand-logo {
-      flex-shrink: 0;
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #1e3a5f, #3b82f6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 18px rgba(59, 130, 246, 0.3);
+      flex-shrink: 0; width: 34px; height: 34px; border-radius: 9px;
+      background: linear-gradient(160deg, #0a84ff, #007aff);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
     }
-
-    .brand-logo svg {
-      width: 22px;
-      height: 22px;
-      fill: none;
-      stroke: #fff;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
+    .brand-logo svg { width: 17px; height: 17px; fill: none; stroke: #fff; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .brand-text h1 { font-size: 17px; font-weight: 650; letter-spacing: -0.02em; line-height: 1.2; color: var(--label); }
+    .brand-text p { font-size: 11px; color: var(--label-secondary); margin-top: 1px; }
+    .header-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .app-main {
+      flex: 1 1 auto; min-height: 0; overflow-x: hidden; overflow-y: auto;
+      -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; overscroll-behavior-x: none;
+      touch-action: pan-y; padding: 12px 16px 20px; background: var(--bg);
     }
-
-    .brand-text {
-      min-width: 0;
+    .app-footer {
+      flex-shrink: 0; padding: 8px 16px calc(10px + var(--safe-bottom));
+      text-align: center; font-size: 11px; color: var(--label-tertiary);
+      background: var(--bg); border-top: 0.5px solid var(--separator);
     }
-
-    .brand-text h1 {
-      font-size: clamp(1rem, 2.5vw, 1.25rem);
-      font-weight: 650;
-      letter-spacing: -0.02em;
-      line-height: 1.25;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .brand-text p {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    /* Buttons */
     .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 10px 14px;
-      border-radius: var(--radius-sm);
-      font-size: 0.875rem;
-      font-weight: 550;
-      border: none;
-      cursor: pointer;
-      transition: background 0.18s ease, box-shadow 0.18s ease, transform 0.15s ease, border-color 0.18s ease;
-      white-space: nowrap;
-      font-family: inherit;
-      -webkit-tap-highlight-color: transparent;
+      display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+      min-height: 34px; padding: 7px 12px; border-radius: 10px; font-size: 13px; font-weight: 600;
+      border: none; cursor: pointer; font-family: inherit; touch-action: manipulation;
+      transition: opacity 0.12s ease, transform 0.12s ease;
     }
-
-    .btn:active:not(:disabled) {
-      transform: scale(0.97);
-    }
-
-    .btn:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #fff;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: var(--accent-hover);
-      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
-    }
-
-    .btn-secondary {
-      background: var(--bg-card);
-      color: var(--text-primary);
-      border: 1px solid var(--border);
-    }
-
-    .btn-secondary:hover:not(:disabled) {
-      background: var(--bg-card-hover);
-      border-color: var(--border-light);
-    }
-
-    .btn-success {
-      background: var(--success-soft);
-      color: var(--success);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-    }
-
-    .btn-success:hover:not(:disabled) {
-      background: rgba(16, 185, 129, 0.25);
-    }
-
-    .btn-danger {
-      background: transparent;
-      color: var(--danger);
-      border: 1px solid transparent;
-      padding: 8px 10px;
-    }
-
-    .btn-danger:hover:not(:disabled) {
-      background: var(--danger-soft);
-      border-color: rgba(239, 68, 68, 0.3);
-    }
-
-    .btn-sm {
-      padding: 7px 12px;
-      font-size: 0.8rem;
-    }
-
-    .btn-icon {
-      width: 36px;
-      height: 36px;
-      padding: 0;
-      border-radius: 8px;
-    }
-
-    /* Status bar */
-    .status-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-
+    .btn:active:not(:disabled) { opacity: 0.65; transform: scale(0.97); }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-secondary { background: var(--blue-soft); color: var(--blue); }
+    .btn-success { background: var(--green-soft); color: var(--green); }
+    .btn-danger { background: transparent; color: var(--red); min-height: 32px; padding: 6px 10px; }
+    .btn-sm { min-height: 32px; padding: 6px 11px; font-size: 13px; }
+    .btn-icon { width: 34px; height: 34px; min-height: 34px; padding: 0; border-radius: 10px; background: var(--surface-secondary); color: var(--label-secondary); }
+    .status-bar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
     .status-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 7px 12px;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      font-weight: 500;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      color: var(--text-secondary);
+      display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px;
+      font-size: 11.5px; font-weight: 500; background: var(--surface); color: var(--label-secondary);
+      box-shadow: 0 0.5px 1.5px rgba(0,0,0,0.06);
     }
-
-    .status-chip .dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--text-muted);
-      flex-shrink: 0;
-    }
-
-    .status-chip.online .dot { background: var(--success); }
-    .status-chip.offline .dot { background: var(--warning); }
-    .status-chip.notify-on .dot { background: var(--accent); }
-    .status-chip.notify-off .dot { background: var(--text-muted); }
-
-    /* Install banner */
+    .status-chip .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--label-tertiary); flex-shrink: 0; }
+    .status-chip.online .dot { background: var(--green); }
+    .status-chip.offline .dot { background: var(--orange); }
+    .status-chip.notify-on .dot { background: var(--blue); }
     .install-banner {
-      display: none;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px 16px;
-      margin-bottom: 18px;
-      background: linear-gradient(135deg, rgba(30, 58, 95, 0.9), rgba(37, 99, 235, 0.2));
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      border-radius: var(--radius);
-      animation: fadeSlideIn 0.4s ease;
+      display: none; align-items: center; justify-content: space-between; gap: 10px;
+      padding: 12px 14px; margin-bottom: 14px; background: var(--surface); border-radius: var(--radius-lg);
+      box-shadow: 0 0.5px 2px rgba(0,0,0,0.06);
     }
-
     .install-banner.show { display: flex; }
-
-    .install-banner p {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      line-height: 1.4;
-    }
-
-    .install-banner strong { color: var(--text-primary); }
-
-    /* Empty state */
+    .install-banner p { font-size: 13px; color: var(--label-secondary); line-height: 1.35; }
+    .install-banner strong { color: var(--label); }
     .empty-state {
-      text-align: center;
-      padding: 48px 20px;
-      background: var(--bg-card);
-      border: 1px dashed var(--border);
-      border-radius: var(--radius);
-      animation: fadeSlideIn 0.45s ease;
+      text-align: center; padding: 36px 20px; background: var(--surface); border-radius: var(--radius-lg);
+      box-shadow: 0 0.5px 2px rgba(0,0,0,0.05);
     }
-
-    .empty-state h2 {
-      font-size: 1.05rem;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    .empty-state p {
-      color: var(--text-secondary);
-      font-size: 0.88rem;
-      margin-bottom: 22px;
-      max-width: 340px;
-      margin-left: auto;
-      margin-right: auto;
-      line-height: 1.55;
-    }
-
-    /* Filter grid - RWD */
-    .filter-list {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
-
+    .empty-state h2 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+    .empty-state p { color: var(--label-secondary); font-size: 13px; margin-bottom: 18px; max-width: 280px; margin-left: auto; margin-right: auto; line-height: 1.5; }
+    .filter-list { display: flex; flex-direction: column; gap: 12px; width: 100%; }
     @media (min-width: 640px) {
-      .filter-list {
-        grid-template-columns: repeat(2, 1fr);
-      }
+      .filter-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+      .app { max-width: 860px; }
     }
-
-    @media (min-width: 960px) {
-      .filter-list {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-      }
-    }
-
-    /* Filter card + animations */
     .filter-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px 18px;
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
-      animation: cardEnter 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+      background: var(--surface); border-radius: var(--radius-lg); padding: 14px 14px 12px;
+      position: relative; overflow: hidden; width: 100%;
+      box-shadow: 0 0.5px 2px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+      animation: cardEnter 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
-
     .filter-card:nth-child(1) { animation-delay: 0.02s; }
-    .filter-card:nth-child(2) { animation-delay: 0.06s; }
-    .filter-card:nth-child(3) { animation-delay: 0.10s; }
-    .filter-card:nth-child(4) { animation-delay: 0.14s; }
-    .filter-card:nth-child(5) { animation-delay: 0.18s; }
-    .filter-card:nth-child(6) { animation-delay: 0.22s; }
-    .filter-card:nth-child(7) { animation-delay: 0.26s; }
-    .filter-card:nth-child(8) { animation-delay: 0.30s; }
-    .filter-card:nth-child(9) { animation-delay: 0.34s; }
-    .filter-card:nth-child(10) { animation-delay: 0.38s; }
-
-    @keyframes cardEnter {
-      from {
-        opacity: 0;
-        transform: translateY(16px) scale(0.98);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    @keyframes fadeSlideIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .filter-card:hover {
-      border-color: var(--border-light);
-      box-shadow: var(--shadow);
-      transform: translateY(-2px);
-    }
-
-    .filter-card.status-ok { border-left: 3px solid var(--success); }
-    .filter-card.status-soon { border-left: 3px solid var(--warning); }
-    .filter-card.status-overdue { border-left: 3px solid var(--danger); }
-
-    /* Pulsing left edge for overdue / soon */
-    .filter-card.status-overdue::before,
-    .filter-card.status-soon::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 3px;
-      animation: statusPulse 2s ease-in-out infinite;
-    }
-
-    .filter-card.status-overdue::before {
-      background: var(--danger);
-      box-shadow: 0 0 12px var(--danger);
-    }
-
-    .filter-card.status-soon::before {
-      background: var(--warning);
-      box-shadow: 0 0 10px var(--warning);
-    }
-
-    @keyframes statusPulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-
-    /* Progress bar under card for remaining days visual */
-    .filter-progress {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 3px;
-      background: rgba(255, 255, 255, 0.04);
-      overflow: hidden;
-    }
-
-    .filter-progress-bar {
-      height: 100%;
-      width: 0%;
-      border-radius: 0 2px 2px 0;
-      transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .filter-progress-bar.ok { background: var(--success); }
-    .filter-progress-bar.soon { background: var(--warning); }
-    .filter-progress-bar.overdue { background: var(--danger); width: 100% !important; }
-
-    .filter-card-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .filter-title {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex: 1;
-      min-width: 0;
-    }
-
+    .filter-card:nth-child(2) { animation-delay: 0.05s; }
+    .filter-card:nth-child(3) { animation-delay: 0.08s; }
+    .filter-card:nth-child(4) { animation-delay: 0.11s; }
+    .filter-card:nth-child(5) { animation-delay: 0.14s; }
+    .filter-card:nth-child(6) { animation-delay: 0.17s; }
+    .filter-card:nth-child(7) { animation-delay: 0.20s; }
+    .filter-card:nth-child(8) { animation-delay: 0.23s; }
+    .filter-card:nth-child(9) { animation-delay: 0.26s; }
+    .filter-card:nth-child(10) { animation-delay: 0.29s; }
+    @keyframes cardEnter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .filter-card:active { transform: scale(0.985); }
+    .filter-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+    .filter-title { display: flex; align-items: center; gap: 9px; flex: 1; min-width: 0; }
     .filter-index {
-      flex-shrink: 0;
-      width: 28px;
-      height: 28px;
-      border-radius: 6px;
-      background: var(--accent-soft);
-      color: var(--accent);
-      font-size: 0.78rem;
-      font-weight: 650;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.25s ease, background 0.25s ease;
+      flex-shrink: 0; width: 26px; height: 26px; border-radius: 7px; background: var(--blue-soft); color: var(--blue);
+      font-size: 12px; font-weight: 650; display: flex; align-items: center; justify-content: center;
     }
-
-    .filter-card:hover .filter-index {
-      transform: scale(1.08);
-      background: rgba(59, 130, 246, 0.28);
+    .filter-name { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--label); }
+    .filter-badge { flex-shrink: 0; font-size: 11px; font-weight: 650; padding: 3px 8px; border-radius: 999px; }
+    .badge-ok { background: var(--green-soft); color: var(--green); }
+    .badge-soon { background: var(--orange-soft); color: var(--orange); }
+    .badge-overdue { background: var(--red-soft); color: var(--red); animation: badgePulse 1.6s ease-in-out infinite; }
+    @keyframes badgePulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+    .filter-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; margin-bottom: 12px; }
+    .meta-item label { display: block; font-size: 10px; color: var(--label-tertiary); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.03em; font-weight: 500; }
+    .meta-item span { font-size: 13px; color: var(--label-secondary); font-variant-numeric: tabular-nums; }
+    .meta-item span.highlight { color: var(--label); font-weight: 600; }
+    .health-section { margin-bottom: 10px; padding: 10px 0 2px; border-top: 0.5px solid var(--separator); }
+    .health-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; }
+    .health-label { font-size: 12px; font-weight: 500; color: var(--label-secondary); }
+    .health-percent { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+    .health-percent.ok { color: var(--green); }
+    .health-percent.soon { color: var(--orange); }
+    .health-percent.overdue { color: var(--red); }
+    .health-track { height: 8px; border-radius: 999px; background: rgba(120, 120, 128, 0.12); overflow: hidden; position: relative; }
+    .health-fill {
+      height: 100%; width: 0%; border-radius: 999px; position: relative;
+      transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
     }
-
-    .filter-name {
-      font-size: 1rem;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    .health-fill.ok { background: linear-gradient(90deg, #30d158, #34c759); }
+    .health-fill.soon { background: linear-gradient(90deg, #ff9f0a, #ff9500); }
+    .health-fill.overdue { background: linear-gradient(90deg, #ff453a, #ff3b30); }
+    .health-fill::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.5) 50%, transparent 70%);
+      background-size: 200% 100%; animation: healthShimmer 2.2s ease-in-out infinite; border-radius: inherit;
     }
-
-    .filter-badge {
-      flex-shrink: 0;
-      font-size: 0.7rem;
-      font-weight: 600;
-      padding: 4px 9px;
-      border-radius: 999px;
-      letter-spacing: 0.02em;
-      transition: transform 0.2s ease;
-    }
-
-    .filter-card:hover .filter-badge {
-      transform: scale(1.04);
-    }
-
-    .badge-ok { background: var(--success-soft); color: var(--success); }
-    .badge-soon { background: var(--warning-soft); color: var(--warning); }
-    .badge-overdue {
-      background: var(--danger-soft);
-      color: var(--danger);
-      animation: badgeBlink 1.8s ease-in-out infinite;
-    }
-
-    @keyframes badgeBlink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.65; }
-    }
-
-    .filter-meta {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px 14px;
-      margin-bottom: 12px;
-    }
-
-    .meta-item label {
-      display: block;
-      font-size: 0.68rem;
-      color: var(--text-muted);
-      margin-bottom: 3px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .meta-item span {
-      font-size: 0.88rem;
-      color: var(--text-secondary);
-      font-variant-numeric: tabular-nums;
-    }
-
-    .meta-item span.highlight {
-      color: var(--text-primary);
-      font-weight: 550;
-    }
-
-    .filter-actions {
-      display: flex;
-      gap: 8px;
-      justify-content: flex-end;
-      flex-wrap: wrap;
-      border-top: 1px solid var(--border);
-      padding-top: 12px;
-      padding-bottom: 2px;
-    }
-
-    /* Modal */
+    @keyframes healthShimmer { 0% { background-position: 120% 0; } 100% { background-position: -80% 0; } }
+    .health-hint { margin-top: 5px; font-size: 11px; color: var(--label-tertiary); }
+    .filter-actions { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; border-top: 0.5px solid var(--separator); padding-top: 10px; }
     .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.65);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      z-index: 100;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      padding: 0;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.25s ease, visibility 0.25s ease;
+      position: fixed; inset: 0; background: rgba(0,0,0,0.35);
+      -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); z-index: 100;
+      display: flex; align-items: flex-end; justify-content: center;
+      opacity: 0; visibility: hidden; transition: opacity 0.22s ease, visibility 0.22s ease;
+      overscroll-behavior: none; touch-action: none;
     }
-
-    .modal-overlay.open {
-      opacity: 1;
-      visibility: visible;
-    }
-
+    .modal-overlay.open { opacity: 1; visibility: visible; touch-action: auto; }
     .modal {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: 16px 16px 0 0;
-      width: 100%;
-      max-width: 480px;
-      max-height: 92vh;
-      max-height: 92dvh;
-      overflow-y: auto;
-      box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.45);
-      transform: translateY(100%);
-      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-      padding-bottom: var(--safe-bottom);
+      background: var(--bg); border-radius: 14px 14px 0 0; width: 100%; max-width: 520px;
+      max-height: min(90vh, 90dvh); display: flex; flex-direction: column; overflow: hidden;
+      transform: translateY(100%); transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+      padding-bottom: var(--safe-bottom); box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
     }
-
-    .modal-overlay.open .modal {
-      transform: translateY(0);
-    }
-
-    @media (min-width: 520px) {
-      .modal-overlay {
-        align-items: center;
-        padding: 20px;
-      }
-      .modal {
-        border-radius: 16px;
-        transform: translateY(16px) scale(0.98);
-        max-height: 90vh;
-      }
-      .modal-overlay.open .modal {
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 18px 20px 10px;
-      position: sticky;
-      top: 0;
-      background: var(--bg-secondary);
-      z-index: 1;
-    }
-
-    .modal-header h2 {
-      font-size: 1.1rem;
-      font-weight: 600;
-    }
-
-    .modal-body {
-      padding: 6px 20px 8px;
-    }
-
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 550;
-      color: var(--text-secondary);
-      margin-bottom: 6px;
-    }
-
-    .form-group input,
-    .form-group select {
-      width: 100%;
-      padding: 11px 14px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text-primary);
-      font-size: 0.95rem;
-      font-family: inherit;
-      outline: none;
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 8px; flex-shrink: 0; background: var(--bg); }
+    .modal-header h2 { font-size: 17px; font-weight: 650; }
+    .modal-body { padding: 4px 16px 8px; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; flex: 1 1 auto; min-height: 0; touch-action: pan-y; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--label-secondary); margin-bottom: 5px; }
+    .form-group input, .form-group select {
+      width: 100%; max-width: 100%; min-height: 44px; padding: 10px 12px; background: var(--surface);
+      border: 0.5px solid var(--separator-opaque); border-radius: 10px; color: var(--label);
+      font-size: 16px; font-family: inherit; outline: none; -webkit-appearance: none; appearance: none;
       transition: border-color 0.15s, box-shadow 0.15s;
-      -webkit-appearance: none;
-      appearance: none;
     }
-
-    .form-group input:focus,
-    .form-group select:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-soft);
-    }
-
-    .form-group input::placeholder {
-      color: var(--text-muted);
-    }
-
+    .form-group input:focus, .form-group select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
+    .form-group input::placeholder { color: var(--label-tertiary); }
     .form-group select {
       cursor: pointer;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 14px center;
-      padding-right: 36px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px;
     }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .form-hint {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      margin-top: 5px;
-    }
-
-    .cycle-preview {
-      margin-top: 8px;
-      padding: 10px 12px;
-      border-radius: var(--radius-sm);
-      background: var(--accent-soft);
-      border: 1px solid rgba(59, 130, 246, 0.25);
-      font-size: 0.8rem;
-      color: var(--accent);
-      display: none;
-      animation: fadeSlideIn 0.3s ease;
-    }
-
-    .cycle-preview.show {
-      display: block;
-    }
-
-    .modal-footer {
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-      padding: 14px 20px 20px;
-      position: sticky;
-      bottom: 0;
-      background: var(--bg-secondary);
-    }
-
-    /* Toast */
-    .toast-container {
-      position: fixed;
-      bottom: calc(20px + var(--safe-bottom));
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 200;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      pointer-events: none;
-      width: min(360px, calc(100% - 32px));
-    }
-
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .form-hint { font-size: 11px; color: var(--label-tertiary); margin-top: 4px; }
+    .cycle-preview { margin-top: 8px; padding: 9px 11px; border-radius: 10px; background: var(--blue-soft); font-size: 12px; color: var(--blue); display: none; }
+    .cycle-preview.show { display: block; }
+    .modal-footer { display: flex; gap: 8px; justify-content: flex-end; padding: 12px 16px 14px; flex-shrink: 0; border-top: 0.5px solid var(--separator); background: var(--bg); }
+    .modal-footer .btn { min-height: 44px; padding: 10px 18px; font-size: 15px; border-radius: 12px; }
+    .toast-container { position: fixed; bottom: calc(20px + var(--safe-bottom)); left: 50%; transform: translateX(-50%); z-index: 200; display: flex; flex-direction: column; gap: 8px; pointer-events: none; width: min(320px, calc(100% - 32px)); }
     .toast {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 12px 16px;
-      font-size: 0.85rem;
-      box-shadow: var(--shadow);
-      animation: toastIn 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-      pointer-events: auto;
-      text-align: center;
+      background: rgba(30, 30, 30, 0.92); color: #fff; border-radius: 12px; padding: 12px 14px;
+      font-size: 13px; font-weight: 500; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      animation: toastIn 0.3s cubic-bezier(0.22, 1, 0.36, 1); pointer-events: auto; text-align: center;
     }
-
-    .toast.success { border-left: 3px solid var(--success); }
-    .toast.warning { border-left: 3px solid var(--warning); }
-    .toast.error { border-left: 3px solid var(--danger); }
-
-    @keyframes toastIn {
-      from { opacity: 0; transform: translateY(12px) scale(0.96); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    footer {
-      margin-top: auto;
-      padding-top: 28px;
-      text-align: center;
-      font-size: 0.72rem;
-      color: var(--text-muted);
-    }
-
-    /* Card leave animation class */
-    .filter-card.leaving {
-      animation: cardLeave 0.3s ease forwards;
-    }
-
-    @keyframes cardLeave {
-      to {
-        opacity: 0;
-        transform: translateX(24px) scale(0.96);
-      }
-    }
-
-    /* Reduced motion */
+    @keyframes toastIn { from { opacity: 0; transform: translateY(8px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .filter-card.leaving { animation: cardLeave 0.28s ease forwards; }
+    @keyframes cardLeave { to { opacity: 0; transform: translateX(16px) scale(0.97); } }
     @media (prefers-reduced-motion: reduce) {
-      .filter-card,
-      .filter-card:nth-child(n),
-      .empty-state,
-      .install-banner,
-      .cycle-preview,
-      .toast,
-      .filter-card.status-overdue::before,
-      .filter-card.status-soon::before,
-      .badge-overdue {
-        animation: none !important;
-      }
-      .filter-card:hover {
-        transform: none;
-      }
-      .filter-progress-bar {
-        transition: none;
-      }
+      .filter-card, .filter-card:nth-child(n), .toast, .badge-overdue, .health-fill::after { animation: none !important; }
+      .health-fill { transition: none; }
     }
-
-    /* Small phones */
-    @media (max-width: 380px) {
-      .header-actions .btn-sm { padding: 6px 10px; font-size: 0.75rem; }
-      .filter-meta { gap: 8px 10px; }
-      .meta-item span { font-size: 0.82rem; }
-      .btn-sm { padding: 6px 10px; font-size: 0.75rem; }
+    @media (min-width: 520px) {
+      .modal-overlay { align-items: center; padding: 20px; }
+      .modal { border-radius: 14px; transform: translateY(10px) scale(0.98); max-height: min(88vh, 88dvh); }
+      .modal-overlay.open .modal { transform: translateY(0) scale(1); }
     }
   </style>
 </head>
 <body>
   <div class="app">
-    <header>
-      <div class="brand">
-        <div class="brand-logo">
-          <svg viewBox="0 0 24 24">
-            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-            <circle cx="12" cy="12" r="4"/>
-          </svg>
+    <header class="app-header">
+      <div class="app-header-inner">
+        <div class="brand">
+          <div class="brand-logo">
+            <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="4"/></svg>
+          </div>
+          <div class="brand-text">
+            <h1>濾芯更換提醒</h1>
+            <p>最多 10 道 · 本機儲存</p>
+          </div>
         </div>
-        <div class="brand-text">
-          <h1>濾芯更換提醒系統</h1>
-          <p>專業過濾器管理 · 最多 10 道</p>
+        <div class="header-actions">
+          <button class="btn btn-secondary btn-sm" id="btn-install" type="button" style="display:none;">安裝</button>
+          <button class="btn btn-secondary btn-sm" id="btn-notify" type="button">通知</button>
+          <button class="btn btn-primary btn-sm" id="btn-add" type="button">新增</button>
         </div>
-      </div>
-      <div class="header-actions">
-        <button class="btn btn-secondary btn-sm" id="btn-install" type="button" style="display:none;">安裝應用</button>
-        <button class="btn btn-secondary btn-sm" id="btn-notify" type="button">啟用通知</button>
-        <button class="btn btn-primary btn-sm" id="btn-add" type="button">新增濾芯</button>
       </div>
     </header>
-
-    <div class="install-banner" id="install-banner">
-      <p><strong>安裝至裝置</strong><br>可像原生 App 一樣從主畫面開啟，並支援離線使用。</p>
-      <button class="btn btn-primary btn-sm" id="btn-install-banner" type="button">立即安裝</button>
-    </div>
-
-    <div class="status-bar">
-      <div class="status-chip" id="chip-online">
-        <span class="dot"></span>
-        <span id="online-text">檢查連線中</span>
+    <div class="app-main" id="app-main">
+      <div class="install-banner" id="install-banner">
+        <p><strong>安裝至主畫面</strong><br>Safari 點分享 →「加入主畫面」。</p>
+        <button class="btn btn-primary btn-sm" id="btn-install-banner" type="button">安裝</button>
       </div>
-      <div class="status-chip" id="chip-notify">
-        <span class="dot"></span>
-        <span id="notify-text">通知未啟用</span>
+      <div class="status-bar">
+        <div class="status-chip" id="chip-online"><span class="dot"></span><span id="online-text">檢查中</span></div>
+        <div class="status-chip" id="chip-notify"><span class="dot"></span><span id="notify-text">通知未啟用</span></div>
+        <div class="status-chip"><span class="dot" style="background:var(--blue)"></span><span id="count-text">0 / 10</span></div>
       </div>
-      <div class="status-chip">
-        <span class="dot" style="background:var(--accent)"></span>
-        <span id="count-text">0 / 10 道濾芯</span>
-      </div>
-    </div>
-
-    <main>
       <div id="empty-state" class="empty-state" style="display:none;">
-        <h2>尚未新增任何濾芯</h2>
-        <p>設定濾芯名稱、更換週期與最近更換日期，系統會自動計算下次更換日並在到期時提醒。資料儲存於本機，支援離線使用。</p>
+        <h2>尚未新增濾芯</h2>
+        <p>設定名稱、更換週期與最近更換日，系統會自動計算下次更換並提醒。</p>
         <button class="btn btn-primary" id="btn-add-empty" type="button">新增第一道濾芯</button>
       </div>
       <div class="filter-list" id="filter-list"></div>
-    </main>
-
-    <footer>
-      濾芯更換提醒系統 · 資料僅儲存於本機瀏覽器 · 支援離線運作與安裝
-    </footer>
+    </div>
+    <footer class="app-footer">資料僅存本機 · 支援離線</footer>
   </div>
-
-  <!-- Modal -->
   <div class="modal-overlay" id="modal-overlay">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div class="modal-header">
         <h2 id="modal-title">新增濾芯</h2>
-        <button class="btn btn-secondary btn-icon" id="btn-close-modal" type="button" aria-label="關閉">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        <button class="btn btn-icon" id="btn-close-modal" type="button" aria-label="關閉">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
         </button>
       </div>
       <div class="modal-body">
         <div class="form-group">
           <label for="input-name">濾芯名稱</label>
-          <input type="text" id="input-name" placeholder="例如：第一道 PP 棉濾芯" maxlength="60" autocomplete="off" />
+          <input type="text" id="input-name" placeholder="例如：第一道 PP 棉" maxlength="60" autocomplete="off" />
         </div>
-
         <div class="form-row">
           <div class="form-group">
             <label for="input-cycle-value">更換週期</label>
-            <input type="number" id="input-cycle-value" min="1" max="3650" placeholder="例如：90" inputmode="numeric" />
+            <input type="number" id="input-cycle-value" min="1" max="3650" placeholder="3" inputmode="numeric" />
           </div>
           <div class="form-group">
             <label for="input-cycle-unit">單位</label>
@@ -874,17 +312,15 @@
             </select>
           </div>
         </div>
-
         <div class="form-group">
           <label for="input-last">最近更換日期</label>
           <input type="date" id="input-last" />
-          <p class="form-hint">填寫後系統會依週期自動計算下次更換日</p>
+          <p class="form-hint">填寫後依週期自動計算下次更換日</p>
         </div>
-
         <div class="form-group">
           <label for="input-next">下次更換日期</label>
           <input type="date" id="input-next" />
-          <p class="form-hint">可手動調整；修改週期或最近更換日時會自動重算</p>
+          <p class="form-hint">可手動調整</p>
           <div class="cycle-preview" id="cycle-preview"></div>
         </div>
       </div>
@@ -894,22 +330,15 @@
       </div>
     </div>
   </div>
-
   <div class="toast-container" id="toast-container"></div>
-
   <script>
     const MAX_FILTERS = 10;
     const DB_NAME = 'FilterReminderDB';
     const DB_VERSION = 2;
     const STORE_NAME = 'filters';
     const CHECK_INTERVAL_MS = 60 * 1000;
-
-    let db = null;
-    let filters = [];
-    let editingId = null;
-    let notifyPermission = 'default';
-    let deferredInstallPrompt = null;
-    let autoCalcEnabled = true;
+    let db = null, filters = [], editingId = null, notifyPermission = 'default';
+    let deferredInstallPrompt = null, autoCalcEnabled = true, lastNotified = {};
 
     function openDB() {
       return new Promise((resolve, reject) => {
@@ -925,64 +354,44 @@
         };
       });
     }
-
     async function loadFilters() {
       return new Promise((resolve, reject) => {
         const tx = db.transaction(STORE_NAME, 'readonly');
-        const store = tx.objectStore(STORE_NAME);
-        const req = store.getAll();
-        req.onsuccess = () => {
-          filters = (req.result || []).sort((a, b) => a.order - b.order);
-          resolve(filters);
-        };
+        const req = tx.objectStore(STORE_NAME).getAll();
+        req.onsuccess = () => { filters = (req.result || []).sort((a, b) => a.order - b.order); resolve(filters); };
         req.onerror = () => reject(req.error);
       });
     }
-
     async function saveFilter(filter) {
       return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, 'readwrite');
-        const store = tx.objectStore(STORE_NAME);
-        const req = store.put(filter);
+        const req = db.transaction(STORE_NAME, 'readwrite').objectStore(STORE_NAME).put(filter);
         req.onsuccess = () => resolve();
         req.onerror = () => reject(req.error);
       });
     }
-
     async function deleteFilter(id) {
       return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, 'readwrite');
-        const store = tx.objectStore(STORE_NAME);
-        const req = store.delete(id);
+        const req = db.transaction(STORE_NAME, 'readwrite').objectStore(STORE_NAME).delete(id);
         req.onsuccess = () => resolve();
         req.onerror = () => reject(req.error);
       });
     }
-
-    function uid() {
-      return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-    }
-
+    function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
     function todayISO() {
       const d = new Date();
-      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
     }
-
     function formatDate(iso) {
       if (!iso) return '—';
       const d = new Date(iso + 'T00:00:00');
       if (isNaN(d)) return '—';
       return d.toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit' });
     }
-
     function daysUntil(iso) {
       if (!iso) return null;
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const target = new Date(iso + 'T00:00:00');
-      return Math.round((target - today) / 86400000);
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      return Math.round((new Date(iso + 'T00:00:00') - today) / 86400000);
     }
-
     function addCycle(isoDate, value, unit) {
       if (!isoDate || !value || value < 1) return '';
       const d = new Date(isoDate + 'T00:00:00');
@@ -991,52 +400,40 @@
       if (unit === 'day') d.setDate(d.getDate() + v);
       else if (unit === 'month') d.setMonth(d.getMonth() + v);
       else if (unit === 'year') d.setFullYear(d.getFullYear() + v);
-      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
     }
-
     function formatCycle(value, unit) {
       if (!value) return '—';
       const u = unit === 'day' ? '天' : unit === 'month' ? '個月' : '年';
-      return `每 ${value} ${u}`;
+      return '每 ' + value + ' ' + u;
     }
-
-    function getStatus(filter) {
-      const days = daysUntil(filter.nextDate);
-      if (days === null) return { key: 'ok', label: '正常', class: 'status-ok', badge: 'badge-ok', progress: 100 };
-      if (days < 0) return { key: 'overdue', label: '已逾期', class: 'status-overdue', badge: 'badge-overdue', progress: 100 };
-      if (days <= 7) return { key: 'soon', label: '即將到期', class: 'status-soon', badge: 'badge-soon', progress: Math.max(5, Math.min(100, (days / 7) * 40)) };
-      // estimate progress based on cycle if available
-      const cycleDays = estimateCycleDays(filter);
-      if (cycleDays > 0) {
-        const remaining = Math.min(100, Math.max(8, (days / cycleDays) * 100));
-        return { key: 'ok', label: '正常', class: 'status-ok', badge: 'badge-ok', progress: remaining };
-      }
-      return { key: 'ok', label: '正常', class: 'status-ok', badge: 'badge-ok', progress: 70 };
-    }
-
     function estimateCycleDays(filter) {
-      const v = filter.cycleValue || 0;
-      const u = filter.cycleUnit || 'month';
+      const v = filter.cycleValue || 0, u = filter.cycleUnit || 'month';
       if (!v) return 0;
       if (u === 'day') return v;
       if (u === 'month') return v * 30;
       if (u === 'year') return v * 365;
       return 0;
     }
-
-    function showToast(message, type = 'success') {
-      const container = document.getElementById('toast-container');
-      const el = document.createElement('div');
-      el.className = `toast ${type}`;
-      el.textContent = message;
-      container.appendChild(el);
-      setTimeout(() => {
-        el.style.opacity = '0';
-        el.style.transition = 'opacity 0.3s';
-        setTimeout(() => el.remove(), 300);
-      }, 3200);
+    function getHealth(filter) {
+      const days = daysUntil(filter.nextDate);
+      const cycleDays = estimateCycleDays(filter);
+      if (days === null) return { percent: 100, key: 'ok', label: '正常', badge: 'badge-ok', hint: '尚未設定下次更換日' };
+      if (days < 0) return { percent: 0, key: 'overdue', label: '已逾期', badge: 'badge-overdue', hint: '已逾期 ' + Math.abs(days) + ' 天，請儘速更換' };
+      if (days === 0) return { percent: 0, key: 'overdue', label: '今日到期', badge: 'badge-overdue', hint: '今日應更換' };
+      let percent = cycleDays > 0
+        ? Math.round(Math.min(100, Math.max(0, (days / cycleDays) * 100)))
+        : Math.round(Math.min(100, Math.max(0, (days / 90) * 100)));
+      if (days <= 7 || percent <= 15)
+        return { percent: percent, key: 'soon', label: '即將到期', badge: 'badge-soon', hint: '剩餘 ' + days + ' 天 · 建議準備更換' };
+      return { percent: percent, key: 'ok', label: '正常', badge: 'badge-ok', hint: '剩餘 ' + days + ' 天' };
     }
-
+    function showToast(message) {
+      const el = document.createElement('div');
+      el.className = 'toast'; el.textContent = message;
+      document.getElementById('toast-container').appendChild(el);
+      setTimeout(function() { el.style.opacity = '0'; el.style.transition = 'opacity 0.25s'; setTimeout(function() { el.remove(); }, 250); }, 2800);
+    }
     function updateNextFromCycle() {
       if (!autoCalcEnabled) return;
       const last = document.getElementById('input-last').value;
@@ -1047,459 +444,228 @@
       if (last && value) {
         const next = addCycle(last, value, unit);
         nextInput.value = next;
-        preview.textContent = `自動計算：${formatDate(last)} + ${formatCycle(value, unit)} = ${formatDate(next)}`;
+        preview.textContent = '自動計算：' + formatDate(last) + ' + ' + formatCycle(value, unit) + ' = ' + formatDate(next);
         preview.classList.add('show');
-      } else {
-        preview.classList.remove('show');
-      }
+      } else preview.classList.remove('show');
     }
-
     function updateNotifyUI() {
       const chip = document.getElementById('chip-notify');
       const text = document.getElementById('notify-text');
       const btn = document.getElementById('btn-notify');
-      if (!('Notification' in window)) {
-        text.textContent = '瀏覽器不支援通知';
-        chip.className = 'status-chip notify-off';
-        btn.disabled = true;
-        return;
-      }
+      if (!('Notification' in window)) { text.textContent = '不支援通知'; chip.className = 'status-chip'; btn.disabled = true; return; }
       notifyPermission = Notification.permission;
-      if (notifyPermission === 'granted') {
-        text.textContent = '通知已啟用';
-        chip.className = 'status-chip notify-on';
-        btn.textContent = '通知已啟用';
-        btn.disabled = true;
-      } else if (notifyPermission === 'denied') {
-        text.textContent = '通知被拒絕';
-        chip.className = 'status-chip notify-off';
-        btn.textContent = '通知被拒絕';
-        btn.disabled = true;
-      } else {
-        text.textContent = '通知未啟用';
-        chip.className = 'status-chip notify-off';
-        btn.textContent = '啟用通知';
-        btn.disabled = false;
-      }
+      if (notifyPermission === 'granted') { text.textContent = '通知已啟用'; chip.className = 'status-chip notify-on'; btn.textContent = '已啟用'; btn.disabled = true; }
+      else if (notifyPermission === 'denied') { text.textContent = '通知被拒'; chip.className = 'status-chip'; btn.textContent = '被拒'; btn.disabled = true; }
+      else { text.textContent = '通知未啟用'; chip.className = 'status-chip'; btn.textContent = '通知'; btn.disabled = false; }
     }
-
     async function requestNotify() {
-      if (!('Notification' in window)) {
-        showToast('此瀏覽器不支援系統通知', 'error');
-        return;
-      }
+      if (!('Notification' in window)) { showToast('此瀏覽器不支援系統通知'); return; }
       try {
         const result = await Notification.requestPermission();
-        notifyPermission = result;
-        updateNotifyUI();
-        if (result === 'granted') {
-          showToast('通知權限已開啟，到期時將提醒您');
-          checkDueFilters(true);
-        } else {
-          showToast('通知權限未授予', 'warning');
-        }
-      } catch (e) {
-        showToast('無法請求通知權限', 'error');
-      }
+        notifyPermission = result; updateNotifyUI();
+        if (result === 'granted') { showToast('通知已開啟'); checkDueFilters(true); }
+        else showToast('通知權限未授予');
+      } catch (e) { showToast('無法請求通知權限'); }
     }
-
     function sendNotification(title, body) {
       if (notifyPermission !== 'granted') return;
       try {
-        const n = new Notification(title, {
-          body,
-          icon: createIconDataUrl(),
-          badge: createIconDataUrl(),
-          tag: 'filter-reminder',
-          renotify: true
-        });
-        n.onclick = () => { window.focus(); n.close(); };
-      } catch (e) {
-        console.warn('Notification failed', e);
-      }
+        const n = new Notification(title, { body: body, tag: 'filter-reminder', renotify: true });
+        n.onclick = function() { window.focus(); n.close(); };
+      } catch (e) {}
     }
-
-    function createIconDataUrl() {
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" rx="24" fill="#1e3a5f"/><circle cx="64" cy="64" r="28" fill="none" stroke="#3b82f6" stroke-width="8"/><path d="M64 36v16M64 76v16M36 64h16M76 64h16" stroke="#3b82f6" stroke-width="6" stroke-linecap="round"/></svg>`;
-      return 'data:image/svg+xml;base64,' + btoa(svg);
-    }
-
-    let lastNotified = {};
-
-    function checkDueFilters(force = false) {
+    function checkDueFilters(force) {
       const todayStr = todayISO();
-      filters.forEach(f => {
+      filters.forEach(function(f) {
         if (!f.nextDate) return;
         const days = daysUntil(f.nextDate);
         const key = f.id + ':' + f.nextDate;
         if (days <= 0 && (force || lastNotified[key] !== todayStr)) {
-          const status = days < 0 ? '已逾期' : '今日到期';
-          sendNotification(`濾芯提醒：${f.name}`, `${status} · 建議儘速更換（下次更換日：${formatDate(f.nextDate)}）`);
+          sendNotification('濾芯提醒：' + f.name, days < 0 ? '已逾期，請儘速更換' : '今日到期');
           lastNotified[key] = todayStr;
         } else if (days > 0 && days <= 3 && (force || lastNotified[key] !== todayStr)) {
-          sendNotification(`濾芯即將到期：${f.name}`, `還有 ${days} 天需要更換（${formatDate(f.nextDate)}）`);
+          sendNotification('濾芯即將到期：' + f.name, '還有 ' + days + ' 天');
           lastNotified[key] = todayStr;
         }
       });
     }
-
     function updateOnlineUI() {
       const chip = document.getElementById('chip-online');
       const text = document.getElementById('online-text');
-      if (navigator.onLine) {
-        chip.className = 'status-chip online';
-        text.textContent = '線上模式';
-      } else {
-        chip.className = 'status-chip offline';
-        text.textContent = '離線模式（資料本機可用）';
-      }
+      if (navigator.onLine) { chip.className = 'status-chip online'; text.textContent = '線上'; }
+      else { chip.className = 'status-chip offline'; text.textContent = '離線'; }
     }
-
     function updateInstallUI() {
       const btn = document.getElementById('btn-install');
       const banner = document.getElementById('install-banner');
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches
-        || window.navigator.standalone === true;
-
-      if (isStandalone) {
-        btn.style.display = 'none';
-        banner.classList.remove('show');
-        return;
-      }
-
-      if (deferredInstallPrompt) {
-        btn.style.display = '';
-        banner.classList.add('show');
-      } else {
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+      if (isStandalone) { btn.style.display = 'none'; banner.classList.remove('show'); return; }
+      if (deferredInstallPrompt) { btn.style.display = ''; banner.classList.add('show'); }
+      else {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
         if (isIOS) {
           btn.style.display = 'none';
-          banner.querySelector('p').innerHTML =
-            '<strong>安裝至主畫面</strong><br>使用 Safari 開啟，點分享按鈕後選擇「加入主畫面」。';
+          banner.querySelector('p').innerHTML = '<strong>安裝至主畫面</strong><br>Safari 點分享 →「加入主畫面」。';
           banner.classList.add('show');
           document.getElementById('btn-install-banner').style.display = 'none';
         }
       }
     }
-
     async function triggerInstall() {
-      if (!deferredInstallPrompt) {
-        showToast('請使用瀏覽器選單中的「安裝應用程式」功能', 'warning');
-        return;
-      }
+      if (!deferredInstallPrompt) { showToast('請用瀏覽器選單安裝'); return; }
       deferredInstallPrompt.prompt();
-      const { outcome } = await deferredInstallPrompt.userChoice;
-      if (outcome === 'accepted') showToast('應用程式已安裝');
-      deferredInstallPrompt = null;
-      updateInstallUI();
+      const choice = await deferredInstallPrompt.userChoice;
+      if (choice.outcome === 'accepted') showToast('已安裝');
+      deferredInstallPrompt = null; updateInstallUI();
     }
-
+    function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
     function render() {
       const list = document.getElementById('filter-list');
       const empty = document.getElementById('empty-state');
-      const countText = document.getElementById('count-text');
-      const btnAdd = document.getElementById('btn-add');
-
-      countText.textContent = `${filters.length} / ${MAX_FILTERS} 道濾芯`;
-      btnAdd.disabled = filters.length >= MAX_FILTERS;
-
-      if (filters.length === 0) {
-        empty.style.display = 'block';
-        list.innerHTML = '';
-        return;
-      }
+      document.getElementById('count-text').textContent = filters.length + ' / ' + MAX_FILTERS;
+      document.getElementById('btn-add').disabled = filters.length >= MAX_FILTERS;
+      if (filters.length === 0) { empty.style.display = 'block'; list.innerHTML = ''; return; }
       empty.style.display = 'none';
-
-      list.innerHTML = filters.map((f, i) => {
-        const st = getStatus(f);
-        const days = daysUntil(f.nextDate);
-        let remainText = '—';
-        if (days !== null) {
-          if (days < 0) remainText = `已逾期 ${Math.abs(days)} 天`;
-          else if (days === 0) remainText = '今日到期';
-          else remainText = `剩餘 ${days} 天`;
-        }
+      list.innerHTML = filters.map(function(f, i) {
+        const h = getHealth(f);
         const cycleText = formatCycle(f.cycleValue, f.cycleUnit || 'month');
-        const progressClass = st.key === 'overdue' ? 'overdue' : st.key === 'soon' ? 'soon' : 'ok';
-        return `
-          <article class="filter-card ${st.class}" data-id="${f.id}">
-            <div class="filter-card-header">
-              <div class="filter-title">
-                <span class="filter-index">${i + 1}</span>
-                <span class="filter-name">${escapeHtml(f.name)}</span>
-              </div>
-              <span class="filter-badge ${st.badge}">${st.label}</span>
-            </div>
-            <div class="filter-meta">
-              <div class="meta-item">
-                <label>更換週期</label>
-                <span>${cycleText}</span>
-              </div>
-              <div class="meta-item">
-                <label>最近更換</label>
-                <span>${formatDate(f.lastDate)}</span>
-              </div>
-              <div class="meta-item">
-                <label>下次更換</label>
-                <span class="highlight">${formatDate(f.nextDate)}</span>
-              </div>
-              <div class="meta-item">
-                <label>剩餘天數</label>
-                <span class="highlight">${remainText}</span>
-              </div>
-            </div>
-            <div class="filter-actions">
-              <button class="btn btn-success btn-sm btn-replaced" data-id="${f.id}" type="button">已更換</button>
-              <button class="btn btn-secondary btn-sm btn-edit" data-id="${f.id}" type="button">編輯</button>
-              <button class="btn btn-danger btn-sm btn-delete" data-id="${f.id}" type="button">刪除</button>
-            </div>
-            <div class="filter-progress">
-              <div class="filter-progress-bar ${progressClass}" style="width:0%" data-target="${st.progress}"></div>
-            </div>
-          </article>
-        `;
+        return '<article class="filter-card" data-id="' + f.id + '">' +
+          '<div class="filter-card-header"><div class="filter-title">' +
+          '<span class="filter-index">' + (i + 1) + '</span>' +
+          '<span class="filter-name">' + escapeHtml(f.name) + '</span></div>' +
+          '<span class="filter-badge ' + h.badge + '">' + h.label + '</span></div>' +
+          '<div class="filter-meta">' +
+          '<div class="meta-item"><label>更換週期</label><span>' + cycleText + '</span></div>' +
+          '<div class="meta-item"><label>最近更換</label><span>' + formatDate(f.lastDate) + '</span></div>' +
+          '<div class="meta-item"><label>下次更換</label><span class="highlight">' + formatDate(f.nextDate) + '</span></div>' +
+          '<div class="meta-item"><label>狀態</label><span class="highlight">' + h.hint + '</span></div></div>' +
+          '<div class="health-section"><div class="health-header">' +
+          '<span class="health-label">濾芯健康度</span>' +
+          '<span class="health-percent ' + h.key + '">' + h.percent + '%</span></div>' +
+          '<div class="health-track"><div class="health-fill ' + h.key + '" data-target="' + h.percent + '" style="width:0%"></div></div>' +
+          '<p class="health-hint">' + h.hint + '</p></div>' +
+          '<div class="filter-actions">' +
+          '<button class="btn btn-success btn-sm btn-replaced" data-id="' + f.id + '" type="button">已更換</button>' +
+          '<button class="btn btn-secondary btn-sm btn-edit" data-id="' + f.id + '" type="button">編輯</button>' +
+          '<button class="btn btn-danger btn-sm btn-delete" data-id="' + f.id + '" type="button">刪除</button>' +
+          '</div></article>';
       }).join('');
-
-      // Animate progress bars after paint
-      requestAnimationFrame(() => {
-        list.querySelectorAll('.filter-progress-bar').forEach(bar => {
-          const target = bar.getAttribute('data-target') || '0';
-          bar.style.width = target + '%';
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          list.querySelectorAll('.health-fill').forEach(function(bar) {
+            bar.style.width = (bar.getAttribute('data-target') || '0') + '%';
+          });
         });
       });
-
-      list.querySelectorAll('.btn-edit').forEach(btn => {
-        btn.addEventListener('click', () => openModal(btn.dataset.id));
-      });
-      list.querySelectorAll('.btn-delete').forEach(btn => {
-        btn.addEventListener('click', () => handleDelete(btn.dataset.id));
-      });
-      list.querySelectorAll('.btn-replaced').forEach(btn => {
-        btn.addEventListener('click', () => handleReplaced(btn.dataset.id));
-      });
+      list.querySelectorAll('.btn-edit').forEach(function(btn) { btn.addEventListener('click', function() { openModal(btn.dataset.id); }); });
+      list.querySelectorAll('.btn-delete').forEach(function(btn) { btn.addEventListener('click', function() { handleDelete(btn.dataset.id); }); });
+      list.querySelectorAll('.btn-replaced').forEach(function(btn) { btn.addEventListener('click', function() { handleReplaced(btn.dataset.id); }); });
     }
-
-    function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    }
-
-    function openModal(id = null) {
-      editingId = id;
-      autoCalcEnabled = true;
-      const overlay = document.getElementById('modal-overlay');
-      const title = document.getElementById('modal-title');
-      const nameInput = document.getElementById('input-name');
-      const cycleVal = document.getElementById('input-cycle-value');
-      const cycleUnit = document.getElementById('input-cycle-unit');
-      const lastInput = document.getElementById('input-last');
-      const nextInput = document.getElementById('input-next');
-      const preview = document.getElementById('cycle-preview');
-      preview.classList.remove('show');
-
+    function openModal(id) {
+      editingId = id; autoCalcEnabled = true;
+      var overlay = document.getElementById('modal-overlay');
+      var title = document.getElementById('modal-title');
+      var nameInput = document.getElementById('input-name');
+      var cycleVal = document.getElementById('input-cycle-value');
+      var cycleUnit = document.getElementById('input-cycle-unit');
+      var lastInput = document.getElementById('input-last');
+      var nextInput = document.getElementById('input-next');
+      document.getElementById('cycle-preview').classList.remove('show');
       if (id) {
-        const f = filters.find(x => x.id === id);
+        var f = filters.find(function(x) { return x.id === id; });
         if (!f) return;
         title.textContent = '編輯濾芯';
-        nameInput.value = f.name;
-        cycleVal.value = f.cycleValue || '';
-        cycleUnit.value = f.cycleUnit || 'month';
-        lastInput.value = f.lastDate || '';
-        nextInput.value = f.nextDate || '';
-        autoCalcEnabled = false;
+        nameInput.value = f.name; cycleVal.value = f.cycleValue || ''; cycleUnit.value = f.cycleUnit || 'month';
+        lastInput.value = f.lastDate || ''; nextInput.value = f.nextDate || ''; autoCalcEnabled = false;
       } else {
-        if (filters.length >= MAX_FILTERS) {
-          showToast(`最多只能新增 ${MAX_FILTERS} 道濾芯`, 'warning');
-          return;
-        }
+        if (filters.length >= MAX_FILTERS) { showToast('最多 ' + MAX_FILTERS + ' 道'); return; }
         title.textContent = '新增濾芯';
-        nameInput.value = '';
-        cycleVal.value = '3';
-        cycleUnit.value = 'month';
-        lastInput.value = todayISO();
-        nextInput.value = '';
-        autoCalcEnabled = true;
-        updateNextFromCycle();
+        nameInput.value = ''; cycleVal.value = '3'; cycleUnit.value = 'month';
+        lastInput.value = todayISO(); nextInput.value = ''; autoCalcEnabled = true; updateNextFromCycle();
       }
       overlay.classList.add('open');
-      setTimeout(() => nameInput.focus(), 120);
+      document.getElementById('app-main').style.overflow = 'hidden';
     }
-
     function closeModal() {
       document.getElementById('modal-overlay').classList.remove('open');
+      document.getElementById('app-main').style.overflow = '';
       editingId = null;
     }
-
     async function handleSave() {
-      const name = document.getElementById('input-name').value.trim();
-      const cycleValue = parseInt(document.getElementById('input-cycle-value').value, 10);
-      const cycleUnit = document.getElementById('input-cycle-unit').value;
-      const lastDate = document.getElementById('input-last').value;
-      let nextDate = document.getElementById('input-next').value;
-
-      if (!name) { showToast('請輸入濾芯名稱', 'warning'); return; }
-      if (!cycleValue || cycleValue < 1) { showToast('請設定有效的更換週期', 'warning'); return; }
-      if (!lastDate) { showToast('請填寫最近更換日期', 'warning'); return; }
+      var name = document.getElementById('input-name').value.trim();
+      var cycleValue = parseInt(document.getElementById('input-cycle-value').value, 10);
+      var cycleUnit = document.getElementById('input-cycle-unit').value;
+      var lastDate = document.getElementById('input-last').value;
+      var nextDate = document.getElementById('input-next').value;
+      if (!name) { showToast('請輸入名稱'); return; }
+      if (!cycleValue || cycleValue < 1) { showToast('請設定週期'); return; }
+      if (!lastDate) { showToast('請填最近更換日'); return; }
       if (!nextDate) nextDate = addCycle(lastDate, cycleValue, cycleUnit);
-      if (!nextDate) { showToast('請設定下次更換日期', 'warning'); return; }
-
+      if (!nextDate) { showToast('請設定下次更換日'); return; }
       if (editingId) {
-        const f = filters.find(x => x.id === editingId);
+        var f = filters.find(function(x) { return x.id === editingId; });
         if (!f) return;
-        f.name = name;
-        f.cycleValue = cycleValue;
-        f.cycleUnit = cycleUnit;
-        f.lastDate = lastDate;
-        f.nextDate = nextDate;
-        f.updatedAt = new Date().toISOString();
-        await saveFilter(f);
-        showToast('濾芯資料已更新');
+        f.name = name; f.cycleValue = cycleValue; f.cycleUnit = cycleUnit; f.lastDate = lastDate; f.nextDate = nextDate;
+        f.updatedAt = new Date().toISOString(); await saveFilter(f); showToast('已更新');
       } else {
-        const f = {
-          id: uid(),
-          name,
-          cycleValue,
-          cycleUnit,
-          lastDate,
-          nextDate,
-          order: filters.length,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        };
-        await saveFilter(f);
-        filters.push(f);
-        showToast('濾芯已新增');
+        var nf = { id: uid(), name: name, cycleValue: cycleValue, cycleUnit: cycleUnit, lastDate: lastDate, nextDate: nextDate,
+          order: filters.length, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+        await saveFilter(nf); filters.push(nf); showToast('已新增');
       }
-      await loadFilters();
-      render();
-      closeModal();
-      checkDueFilters(true);
+      await loadFilters(); render(); closeModal(); checkDueFilters(true);
     }
-
     async function handleDelete(id) {
-      const f = filters.find(x => x.id === id);
+      var f = filters.find(function(x) { return x.id === id; });
       if (!f) return;
-      if (!confirm(`確定要刪除「${f.name}」嗎？此操作無法復原。`)) return;
-
-      const card = document.querySelector(`.filter-card[data-id="${id}"]`);
-      if (card) {
-        card.classList.add('leaving');
-        await new Promise(r => setTimeout(r, 280));
-      }
-
-      await deleteFilter(id);
-      await loadFilters();
-      filters.forEach((item, idx) => {
-        item.order = idx;
-        saveFilter(item);
-      });
-      render();
-      showToast('濾芯已刪除');
+      if (!confirm('確定刪除「' + f.name + '」？')) return;
+      var card = document.querySelector('.filter-card[data-id="' + id + '"]');
+      if (card) { card.classList.add('leaving'); await new Promise(function(r) { setTimeout(r, 260); }); }
+      await deleteFilter(id); await loadFilters();
+      filters.forEach(function(item, idx) { item.order = idx; saveFilter(item); });
+      render(); showToast('已刪除');
     }
-
     async function handleReplaced(id) {
-      const f = filters.find(x => x.id === id);
+      var f = filters.find(function(x) { return x.id === id; });
       if (!f) return;
-      const cycleVal = f.cycleValue || 3;
-      const cycleUnit = f.cycleUnit || 'month';
-      if (!confirm(`確認「${f.name}」已於今日更換？\n系統將以今天為基準，依週期（${formatCycle(cycleVal, cycleUnit)}）自動計算下次更換日。`)) return;
-
-      f.lastDate = todayISO();
-      f.nextDate = addCycle(f.lastDate, cycleVal, cycleUnit);
-      f.updatedAt = new Date().toISOString();
-      await saveFilter(f);
-      await loadFilters();
-      render();
-      showToast(`已記錄更換，下次更換日：${formatDate(f.nextDate)}`);
-      checkDueFilters(true);
+      var cycleVal = f.cycleValue || 3, cycleUnit = f.cycleUnit || 'month';
+      if (!confirm('確認「' + f.name + '」今日已更換？\\n將依 ' + formatCycle(cycleVal, cycleUnit) + ' 計算下次日期。')) return;
+      f.lastDate = todayISO(); f.nextDate = addCycle(f.lastDate, cycleVal, cycleUnit);
+      f.updatedAt = new Date().toISOString(); await saveFilter(f);
+      await loadFilters(); render(); showToast('下次：' + formatDate(f.nextDate)); checkDueFilters(true);
     }
-
     function registerSW() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./sw.js')
-        .then(reg => console.log('SW registered', reg.scope))
-        .catch(err => {
-          console.warn('sw.js failed, trying blob SW', err);
-          const swCode = `
-            const CACHE = 'filter-reminder-v3-blob';
-            self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./','./index.html'])).then(() => self.skipWaiting())); });
-            self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
-            self.addEventListener('fetch', e => {
-              e.respondWith(caches.match(e.request).then(c => c || fetch(e.request).catch(() => c)));
-            });
-          `;
-          const blob = new Blob([swCode], { type: 'application/javascript' });
-          navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
-        });
+      navigator.serviceWorker.register('./sw.js').catch(function() {
+        var swCode = "const CACHE='filter-reminder-v5';self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['./','./index.html'])).then(()=>self.skipWaiting()))});self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request).catch(()=>c)))});";
+        navigator.serviceWorker.register(URL.createObjectURL(new Blob([swCode], { type: 'application/javascript' }))).catch(function() {});
+      });
     }
-
+    document.addEventListener('gesturestart', function(e) { e.preventDefault(); }, { passive: false });
+    document.addEventListener('gesturechange', function(e) { e.preventDefault(); }, { passive: false });
     async function init() {
-      try {
-        db = await openDB();
-        await loadFilters();
-        render();
-      } catch (e) {
-        console.error(e);
-        showToast('資料庫初始化失敗，將使用記憶體模式', 'error');
-      }
-
-      updateOnlineUI();
-      updateNotifyUI();
-      updateInstallUI();
-      checkDueFilters(true);
-
-      document.getElementById('input-last').addEventListener('change', () => {
-        autoCalcEnabled = true;
-        updateNextFromCycle();
-      });
-      document.getElementById('input-cycle-value').addEventListener('input', () => {
-        autoCalcEnabled = true;
-        updateNextFromCycle();
-      });
-      document.getElementById('input-cycle-unit').addEventListener('change', () => {
-        autoCalcEnabled = true;
-        updateNextFromCycle();
-      });
-      document.getElementById('input-next').addEventListener('change', () => {
-        autoCalcEnabled = false;
-        document.getElementById('cycle-preview').classList.remove('show');
-      });
-
-      document.getElementById('btn-add').addEventListener('click', () => openModal());
-      document.getElementById('btn-add-empty').addEventListener('click', () => openModal());
+      try { db = await openDB(); await loadFilters(); render(); } catch (e) { showToast('資料庫初始化失敗'); }
+      updateOnlineUI(); updateNotifyUI(); updateInstallUI(); checkDueFilters(true);
+      document.getElementById('input-last').addEventListener('change', function() { autoCalcEnabled = true; updateNextFromCycle(); });
+      document.getElementById('input-cycle-value').addEventListener('input', function() { autoCalcEnabled = true; updateNextFromCycle(); });
+      document.getElementById('input-cycle-unit').addEventListener('change', function() { autoCalcEnabled = true; updateNextFromCycle(); });
+      document.getElementById('input-next').addEventListener('change', function() { autoCalcEnabled = false; document.getElementById('cycle-preview').classList.remove('show'); });
+      document.getElementById('btn-add').addEventListener('click', function() { openModal(null); });
+      document.getElementById('btn-add-empty').addEventListener('click', function() { openModal(null); });
       document.getElementById('btn-notify').addEventListener('click', requestNotify);
       document.getElementById('btn-install').addEventListener('click', triggerInstall);
       document.getElementById('btn-install-banner').addEventListener('click', triggerInstall);
       document.getElementById('btn-close-modal').addEventListener('click', closeModal);
       document.getElementById('btn-cancel').addEventListener('click', closeModal);
       document.getElementById('btn-save').addEventListener('click', handleSave);
-      document.getElementById('modal-overlay').addEventListener('click', (e) => {
-        if (e.target === e.currentTarget) closeModal();
-      });
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeModal();
-      });
-
+      document.getElementById('modal-overlay').addEventListener('click', function(e) { if (e.target === e.currentTarget) closeModal(); });
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
       window.addEventListener('online', updateOnlineUI);
       window.addEventListener('offline', updateOnlineUI);
-
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredInstallPrompt = e;
-        updateInstallUI();
-      });
-
-      window.addEventListener('appinstalled', () => {
-        deferredInstallPrompt = null;
-        updateInstallUI();
-        showToast('應用程式已成功安裝');
-      });
-
-      setInterval(() => checkDueFilters(false), CHECK_INTERVAL_MS);
+      window.addEventListener('beforeinstallprompt', function(e) { e.preventDefault(); deferredInstallPrompt = e; updateInstallUI(); });
+      window.addEventListener('appinstalled', function() { deferredInstallPrompt = null; updateInstallUI(); showToast('已安裝'); });
+      setInterval(function() { checkDueFilters(false); }, CHECK_INTERVAL_MS);
       registerSW();
     }
-
     init();
   </script>
 </body>
