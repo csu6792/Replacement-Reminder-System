@@ -441,6 +441,45 @@
     .filter-stages.lots .stage-label { font-size: 9px; }
     .filter-stages.lots .stage-bubbles span { width: 3px; height: 3px; }
 
+
+    /* History panel */
+    .history-list { display: flex; flex-direction: column; gap: 0; }
+    .history-item {
+      display: flex; gap: 12px; padding: 12px 0;
+      border-bottom: 0.5px solid var(--separator);
+      animation: cardEnter 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .history-item:last-child { border-bottom: none; }
+    .history-icon {
+      flex-shrink: 0; width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+    }
+    .history-icon.replace { background: var(--green-soft); color: var(--green); }
+    .history-icon.create { background: var(--blue-soft); color: var(--blue); }
+    .history-icon.edit { background: var(--orange-soft); color: var(--orange); }
+    .history-icon.delete { background: var(--red-soft); color: var(--red); }
+    .history-body { flex: 1; min-width: 0; }
+    .history-title {
+      font-size: 14px; font-weight: 600; color: var(--label);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .history-meta {
+      font-size: 12px; color: var(--label-secondary); margin-top: 2px; line-height: 1.4;
+    }
+    .history-time {
+      flex-shrink: 0; font-size: 11px; color: var(--label-tertiary);
+      text-align: right; font-variant-numeric: tabular-nums; padding-top: 2px;
+    }
+    .history-empty {
+      text-align: center; padding: 36px 16px; color: var(--label-secondary); font-size: 14px;
+    }
+    .history-filter-chip {
+      display: inline-block; margin-top: 4px; padding: 2px 8px; border-radius: 6px;
+      font-size: 11px; background: var(--surface-secondary); color: var(--label-secondary);
+    }
+    .modal.history-modal .modal-body { padding-bottom: 16px; }
+
   </style>
 </head>
 <body>
@@ -458,6 +497,7 @@
         </div>
         <div class="header-actions">
           <button class="btn btn-secondary btn-sm" id="btn-install" type="button" style="display:none;">安裝</button>
+          <button class="btn btn-secondary btn-sm" id="btn-history" type="button">紀錄</button>
           <button class="btn btn-secondary btn-sm" id="btn-notify" type="button">通知</button>
           <button class="btn btn-primary btn-sm" id="btn-add" type="button">新增</button>
         </div>
@@ -534,12 +574,32 @@
       </div>
     </div>
   </div>
+  
+  <div class="modal-overlay" id="history-overlay">
+    <div class="modal history-modal" role="dialog" aria-modal="true" aria-labelledby="history-title">
+      <div class="modal-header">
+        <h2 id="history-title">更換歷史</h2>
+        <button class="btn btn-icon" id="btn-close-history" type="button" aria-label="關閉">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="history-list" class="history-list"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btn-clear-history" type="button">清除紀錄</button>
+        <button class="btn btn-primary" id="btn-close-history-2" type="button">關閉</button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast-container" id="toast-container"></div>
   <script>
     const MAX_FILTERS = 10;
     const DB_NAME = 'FilterReminderDB';
-    const DB_VERSION = 2;
+    const DB_VERSION = 3;
     const STORE_NAME = 'filters';
+    const HISTORY_STORE = 'history';
     const CHECK_INTERVAL_MS = 60 * 1000;
     let db = null, filters = [], editingId = null, notifyPermission = 'default';
     let deferredInstallPrompt = null, autoCalcEnabled = true, lastNotified = {};
@@ -554,6 +614,10 @@
           if (!database.objectStoreNames.contains(STORE_NAME)) {
             const store = database.createObjectStore(STORE_NAME, { keyPath: 'id' });
             store.createIndex('nextDate', 'nextDate', { unique: false });
+          }
+          if (!database.objectStoreNames.contains(HISTORY_STORE)) {
+            const hs = database.createObjectStore(HISTORY_STORE, { keyPath: 'id' });
+            hs.createIndex('createdAt', 'createdAt', { unique: false });
           }
         };
       });
@@ -580,6 +644,102 @@
         req.onerror = () => reject(req.error);
       });
     }
+
+    async function addHistory(entry) {
+      const item = {
+        id: uid(),
+        type: entry.type || 'replace',
+        filterId: entry.filterId || '',
+        filterName: entry.filterName || '',
+        detail: entry.detail || '',
+        createdAt: new Date().toISOString()
+      };
+      return new Promise((resolve, reject) => {
+        try {
+          const req = db.transaction(HISTORY_STORE, 'readwrite').objectStore(HISTORY_STORE).put(item);
+          req.onsuccess = () => resolve(item);
+          req.onerror = () => reject(req.error);
+        } catch (e) { reject(e); }
+      });
+    }
+    async function loadHistory() {
+      return new Promise((resolve, reject) => {
+        try {
+          const req = db.transaction(HISTORY_STORE, 'readonly').objectStore(HISTORY_STORE).getAll();
+          req.onsuccess = () => {
+            const list = (req.result || []).sort(function(a, b) {
+              return (b.createdAt || '').localeCompare(a.createdAt || '');
+            });
+            resolve(list);
+          };
+          req.onerror = () => reject(req.error);
+        } catch (e) { resolve([]); }
+      });
+    }
+    async function clearHistory() {
+      return new Promise((resolve, reject) => {
+        try {
+          const tx = db.transaction(HISTORY_STORE, 'readwrite');
+          const store = tx.objectStore(HISTORY_STORE);
+          const req = store.clear();
+          req.onsuccess = () => resolve();
+          req.onerror = () => reject(req.error);
+        } catch (e) { reject(e); }
+      });
+    }
+    function formatDateTime(iso) {
+      if (!iso) return '—';
+      const d = new Date(iso);
+      if (isNaN(d)) return '—';
+      const date = d.toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit' });
+      const time = d.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false });
+      return date + ' ' + time;
+    }
+    function historyTypeLabel(type) {
+      if (type === 'replace') return '更換';
+      if (type === 'create') return '新增';
+      if (type === 'edit') return '編輯';
+      if (type === 'delete') return '刪除';
+      return '紀錄';
+    }
+    function historyTypeClass(type) {
+      if (type === 'replace') return 'replace';
+      if (type === 'create') return 'create';
+      if (type === 'edit') return 'edit';
+      if (type === 'delete') return 'delete';
+      return 'create';
+    }
+    async function openHistory() {
+      const overlay = document.getElementById('history-overlay');
+      const listEl = document.getElementById('history-list');
+      listEl.innerHTML = '<div class="history-empty">載入中…</div>';
+      overlay.classList.add('open');
+      document.getElementById('app-main').style.overflow = 'hidden';
+      try {
+        const items = await loadHistory();
+        if (!items.length) {
+          listEl.innerHTML = '<div class="history-empty">尚無歷史紀錄<br><span style="font-size:12px;color:var(--label-tertiary)">更換濾芯後會自動記錄</span></div>';
+          return;
+        }
+        listEl.innerHTML = items.map(function(h, idx) {
+          return '<div class="history-item" style="animation-delay:' + (idx * 0.03) + 's">' +
+            '<div class="history-icon ' + historyTypeClass(h.type) + '">' + historyTypeLabel(h.type) + '</div>' +
+            '<div class="history-body">' +
+            '<div class="history-title">' + escapeHtml(h.filterName || '（未命名）') + '</div>' +
+            '<div class="history-meta">' + escapeHtml(h.detail || '') + '</div>' +
+            '</div>' +
+            '<div class="history-time">' + formatDateTime(h.createdAt) + '</div>' +
+            '</div>';
+        }).join('');
+      } catch (e) {
+        listEl.innerHTML = '<div class="history-empty">無法載入紀錄</div>';
+      }
+    }
+    function closeHistory() {
+      document.getElementById('history-overlay').classList.remove('open');
+      document.getElementById('app-main').style.overflow = '';
+    }
+
     function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
     function todayISO() {
       const d = new Date();
@@ -848,11 +1008,15 @@
         var f = filters.find(function(x) { return x.id === editingId; });
         if (!f) return;
         f.name = name; f.cycleValue = cycleValue; f.cycleUnit = cycleUnit; f.lastDate = lastDate; f.nextDate = nextDate;
-        f.updatedAt = new Date().toISOString(); await saveFilter(f); showToast('已更新');
+        f.updatedAt = new Date().toISOString(); await saveFilter(f);
+        try { await addHistory({ type: 'edit', filterId: f.id, filterName: f.name, detail: '更新資料 · 下次 ' + formatDate(nextDate) + ' · 週期 ' + formatCycle(cycleValue, cycleUnit) }); } catch (e) {}
+        showToast('已更新');
       } else {
         var nf = { id: uid(), name: name, cycleValue: cycleValue, cycleUnit: cycleUnit, lastDate: lastDate, nextDate: nextDate,
           order: filters.length, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
-        await saveFilter(nf); filters.push(nf); showToast('已新增');
+        await saveFilter(nf); filters.push(nf);
+        try { await addHistory({ type: 'create', filterId: nf.id, filterName: nf.name, detail: '新增濾芯 · 週期 ' + formatCycle(cycleValue, cycleUnit) + ' · 下次 ' + formatDate(nextDate) }); } catch (e) {}
+        showToast('已新增');
       }
       await loadFilters(); render(); closeModal(); checkDueFilters(true);
     }
@@ -862,8 +1026,10 @@
       if (!confirm('確定刪除「' + f.name + '」？')) return;
       var card = document.querySelector('.filter-card[data-id="' + id + '"]');
       if (card) { card.classList.add('leaving'); await new Promise(function(r) { setTimeout(r, 260); }); }
+      var delName = f.name;
       await deleteFilter(id); await loadFilters();
       filters.forEach(function(item, idx) { item.order = idx; saveFilter(item); });
+      try { await addHistory({ type: 'delete', filterId: id, filterName: delName, detail: '已刪除濾芯' }); } catch (e) {}
       render(); showToast('已刪除');
     }
     async function handleReplaced(id) {
@@ -871,14 +1037,23 @@
       if (!f) return;
       var cycleVal = f.cycleValue || 3, cycleUnit = f.cycleUnit || 'month';
       if (!confirm('確認「' + f.name + '」今日已更換？\n將依 ' + formatCycle(cycleVal, cycleUnit) + ' 計算下次日期。')) return;
+      var prevNext = f.nextDate;
       f.lastDate = todayISO(); f.nextDate = addCycle(f.lastDate, cycleVal, cycleUnit);
       f.updatedAt = new Date().toISOString(); await saveFilter(f);
+      try {
+        await addHistory({
+          type: 'replace',
+          filterId: f.id,
+          filterName: f.name,
+          detail: '完成更換 · 下次：' + formatDate(f.nextDate) + '（' + formatCycle(cycleVal, cycleUnit) + '）'
+        });
+      } catch (e) {}
       await loadFilters(); render(); showToast('下次：' + formatDate(f.nextDate)); checkDueFilters(true);
     }
     function registerSW() {
       if (!('serviceWorker' in navigator)) return;
       navigator.serviceWorker.register('./sw.js').catch(function() {
-        var swCode = "const CACHE='filter-reminder-v5';self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['./','./index.html'])).then(()=>self.skipWaiting()))});self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request).catch(()=>c)))});";
+        var swCode = "const CACHE='filter-reminder-v6';self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['./','./index.html'])).then(()=>self.skipWaiting()))});self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request).catch(()=>c)))});";
         navigator.serviceWorker.register(URL.createObjectURL(new Blob([swCode], { type: 'application/javascript' }))).catch(function() {});
       });
     }
@@ -893,6 +1068,16 @@
       document.getElementById('input-next').addEventListener('change', function() { autoCalcEnabled = false; document.getElementById('cycle-preview').classList.remove('show'); });
       document.getElementById('btn-add').addEventListener('click', function() { openModal(null); });
       document.getElementById('btn-add-empty').addEventListener('click', function() { openModal(null); });
+      document.getElementById('btn-history').addEventListener('click', openHistory);
+      document.getElementById('btn-close-history').addEventListener('click', closeHistory);
+      document.getElementById('btn-close-history-2').addEventListener('click', closeHistory);
+      document.getElementById('btn-clear-history').addEventListener('click', async function() {
+        if (!confirm('確定清除全部歷史紀錄？')) return;
+        try { await clearHistory(); showToast('紀錄已清除'); openHistory(); } catch (e) { showToast('清除失敗'); }
+      });
+      document.getElementById('history-overlay').addEventListener('click', function(e) {
+        if (e.target === e.currentTarget) closeHistory();
+      });
       document.getElementById('btn-notify').addEventListener('click', requestNotify);
       document.getElementById('btn-install').addEventListener('click', triggerInstall);
       document.getElementById('btn-install-banner').addEventListener('click', triggerInstall);
@@ -900,7 +1085,9 @@
       document.getElementById('btn-cancel').addEventListener('click', closeModal);
       document.getElementById('btn-save').addEventListener('click', handleSave);
       document.getElementById('modal-overlay').addEventListener('click', function(e) { if (e.target === e.currentTarget) closeModal(); });
-      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') { closeModal(); closeHistory(); }
+      });
       window.addEventListener('online', updateOnlineUI);
       window.addEventListener('offline', updateOnlineUI);
       window.addEventListener('beforeinstallprompt', function(e) { e.preventDefault(); deferredInstallPrompt = e; updateInstallUI(); });

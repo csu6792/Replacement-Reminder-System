@@ -1,4 +1,4 @@
-const CACHE = 'filter-reminder-v5';
+const CACHE = 'filter-reminder-v6';
 const ASSETS = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', (event) => {
