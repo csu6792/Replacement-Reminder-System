@@ -244,6 +244,203 @@
       .modal { border-radius: 14px; transform: translateY(10px) scale(0.98); max-height: min(88vh, 88dvh); }
       .modal-overlay.open .modal { transform: translateY(0) scale(1); }
     }
+
+    /* Multi-stage filter system visual */
+    .filter-system {
+      display: none;
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 16px 14px 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 0.5px 2px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+      overflow: hidden;
+    }
+    .filter-system.show { display: block; animation: cardEnter 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .filter-system-title {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .filter-system-title h3 {
+      font-size: 13px; font-weight: 600; color: var(--label-secondary);
+    }
+    .filter-system-title .sys-status {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 600; color: var(--green);
+    }
+    .filter-system-title .sys-status .live-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--green);
+      box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.5);
+      animation: livePulse 1.6s ease-out infinite;
+    }
+    @keyframes livePulse {
+      0% { box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.45); }
+      70% { box-shadow: 0 0 0 8px rgba(52, 199, 89, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(52, 199, 89, 0); }
+    }
+    .filter-stages {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 6px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 4px 2px 8px;
+      scrollbar-width: none;
+    }
+    .filter-stages::-webkit-scrollbar { display: none; }
+    .stage-unit {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      min-width: 44px;
+    }
+    .stage-body {
+      position: relative;
+      width: 36px;
+      height: 72px;
+      border-radius: 10px 10px 8px 8px;
+      background: linear-gradient(180deg, #e8eef5 0%, #d4dde8 40%, #c5d0dc 100%);
+      border: 1.5px solid rgba(60, 60, 67, 0.18);
+      box-shadow:
+        inset 0 2px 4px rgba(255,255,255,0.7),
+        inset 0 -3px 6px rgba(0,0,0,0.06),
+        0 2px 6px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    .stage-body::before {
+      content: "";
+      position: absolute;
+      left: 4px; right: 4px; top: 6px;
+      height: 8px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.55);
+    }
+    /* water level fill */
+    .stage-water {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 0%;
+      background: linear-gradient(180deg, rgba(10, 132, 255, 0.35), rgba(0, 122, 255, 0.55));
+      transition: height 1s cubic-bezier(0.22, 1, 0.36, 1);
+      border-radius: 0 0 6px 6px;
+    }
+    .stage-water::after {
+      content: "";
+      position: absolute;
+      left: -20%; right: -20%; top: -4px;
+      height: 10px;
+      background: radial-gradient(ellipse at center, rgba(255,255,255,0.5) 0%, transparent 70%);
+      animation: waterWave 2.4s ease-in-out infinite;
+    }
+    @keyframes waterWave {
+      0%, 100% { transform: translateX(-8%) scaleY(1); }
+      50% { transform: translateX(8%) scaleY(1.2); }
+    }
+    /* bubbles */
+    .stage-bubbles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .stage-bubbles span {
+      position: absolute;
+      bottom: 8%;
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.7);
+      animation: bubbleRise 2.8s ease-in infinite;
+      opacity: 0;
+    }
+    .stage-bubbles span:nth-child(1) { left: 22%; animation-delay: 0s; }
+    .stage-bubbles span:nth-child(2) { left: 48%; animation-delay: 0.7s; width: 3px; height: 3px; }
+    .stage-bubbles span:nth-child(3) { left: 68%; animation-delay: 1.4s; width: 5px; height: 5px; }
+    @keyframes bubbleRise {
+      0% { transform: translateY(0) scale(0.6); opacity: 0; }
+      15% { opacity: 0.85; }
+      100% { transform: translateY(-58px) scale(1); opacity: 0; }
+    }
+    .stage-cap {
+      width: 28px;
+      height: 8px;
+      border-radius: 4px 4px 2px 2px;
+      background: linear-gradient(180deg, #a8b4c4, #8a97a8);
+      border: 1px solid rgba(60,60,67,0.2);
+      margin-bottom: -2px;
+      position: relative;
+      z-index: 1;
+    }
+    .stage-cap::after {
+      content: "";
+      position: absolute;
+      left: 50%; top: -3px;
+      width: 6px; height: 4px;
+      margin-left: -3px;
+      border-radius: 2px 2px 0 0;
+      background: #7a8798;
+    }
+    .stage-label {
+      font-size: 10px;
+      font-weight: 650;
+      color: var(--label-secondary);
+      font-variant-numeric: tabular-nums;
+    }
+    .stage-pipe {
+      flex: 0 0 auto;
+      width: 10px;
+      height: 4px;
+      align-self: center;
+      margin-bottom: 36px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, #9aa8b8, #b0bdcc, #9aa8b8);
+      position: relative;
+      overflow: hidden;
+    }
+    .stage-pipe::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(0,122,255,0.55), transparent);
+      animation: flowPipe 1.4s linear infinite;
+    }
+    @keyframes flowPipe {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    .stage-unit.alert .stage-body {
+      border-color: rgba(255, 149, 0, 0.45);
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.5), 0 0 0 2px rgba(255, 149, 0, 0.15);
+    }
+    .stage-unit.danger .stage-body {
+      border-color: rgba(255, 59, 48, 0.5);
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.5), 0 0 0 2px rgba(255, 59, 48, 0.18);
+    }
+    .stage-unit.danger .stage-water {
+      background: linear-gradient(180deg, rgba(255, 69, 58, 0.35), rgba(255, 59, 48, 0.5));
+    }
+    .stage-unit.alert .stage-water {
+      background: linear-gradient(180deg, rgba(255, 159, 10, 0.35), rgba(255, 149, 0, 0.5));
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .live-dot, .stage-water::after, .stage-bubbles span, .stage-pipe::after { animation: none !important; }
+    }
+
+
+    .filter-stages.many .stage-body { width: 28px; height: 58px; }
+    .filter-stages.many .stage-cap { width: 22px; height: 6px; }
+    .filter-stages.many .stage-unit { min-width: 34px; }
+    .filter-stages.many .stage-pipe { width: 6px; margin-bottom: 30px; }
+    .filter-stages.many .stage-label { font-size: 9px; }
+    .filter-stages.lots .stage-body { width: 22px; height: 48px; border-radius: 7px; }
+    .filter-stages.lots .stage-cap { width: 16px; height: 5px; }
+    .filter-stages.lots .stage-unit { min-width: 26px; gap: 4px; }
+    .filter-stages.lots .stage-pipe { width: 4px; margin-bottom: 26px; }
+    .filter-stages.lots .stage-label { font-size: 9px; }
+    .filter-stages.lots .stage-bubbles span { width: 3px; height: 3px; }
+
   </style>
 </head>
 <body>
@@ -280,6 +477,13 @@
         <h2>尚未新增濾芯</h2>
         <p>設定名稱、更換週期與最近更換日，系統會自動計算下次更換並提醒。</p>
         <button class="btn btn-primary" id="btn-add-empty" type="button">新增第一道濾芯</button>
+      </div>
+      <div class="filter-system" id="filter-system">
+        <div class="filter-system-title">
+          <h3>濾水系統運作中</h3>
+          <span class="sys-status"><span class="live-dot"></span><span id="sys-count">0 道</span></span>
+        </div>
+        <div class="filter-stages" id="filter-stages"></div>
       </div>
       <div class="filter-list" id="filter-list"></div>
     </div>
@@ -522,10 +726,48 @@
     function render() {
       const list = document.getElementById('filter-list');
       const empty = document.getElementById('empty-state');
+      const sys = document.getElementById('filter-system');
+      const stages = document.getElementById('filter-stages');
       document.getElementById('count-text').textContent = filters.length + ' / ' + MAX_FILTERS;
       document.getElementById('btn-add').disabled = filters.length >= MAX_FILTERS;
-      if (filters.length === 0) { empty.style.display = 'block'; list.innerHTML = ''; return; }
+      if (filters.length === 0) {
+        empty.style.display = 'block';
+        list.innerHTML = '';
+        if (sys) sys.classList.remove('show');
+        if (stages) stages.innerHTML = '';
+        return;
+      }
       empty.style.display = 'none';
+      if (sys) sys.classList.add('show');
+      if (document.getElementById('sys-count')) document.getElementById('sys-count').textContent = filters.length + ' 道';
+      if (stages) {
+        var parts = [];
+        filters.forEach(function(f, i) {
+          var h = getHealth(f);
+          var cls = h.key === 'overdue' ? 'danger' : (h.key === 'soon' ? 'alert' : '');
+          var waterH = Math.max(8, Math.min(92, h.percent));
+          if (i > 0) parts.push('<div class="stage-pipe" aria-hidden="true"></div>');
+          parts.push(
+            '<div class="stage-unit ' + cls + '" title="' + escapeHtml(f.name) + '">' +
+            '<div class="stage-cap"></div>' +
+            '<div class="stage-body">' +
+            '<div class="stage-water" style="height:0%" data-h="' + waterH + '"></div>' +
+            '<div class="stage-bubbles"><span></span><span></span><span></span></div>' +
+            '</div>' +
+            '<span class="stage-label">' + (i + 1) + '</span>' +
+            '</div>'
+          );
+        });
+        stages.className = 'filter-stages' + (filters.length >= 8 ? ' lots' : (filters.length >= 5 ? ' many' : ''));
+        stages.innerHTML = parts.join('');
+        requestAnimationFrame(function() {
+          requestAnimationFrame(function() {
+            stages.querySelectorAll('.stage-water').forEach(function(el) {
+              el.style.height = (el.getAttribute('data-h') || '50') + '%';
+            });
+          });
+        });
+      }
       list.innerHTML = filters.map(function(f, i) {
         const h = getHealth(f);
         const cycleText = formatCycle(f.cycleValue, f.cycleUnit || 'month');
@@ -628,7 +870,7 @@
       var f = filters.find(function(x) { return x.id === id; });
       if (!f) return;
       var cycleVal = f.cycleValue || 3, cycleUnit = f.cycleUnit || 'month';
-      if (!confirm('確認「' + f.name + '」今日已更換？\\n將依 ' + formatCycle(cycleVal, cycleUnit) + ' 計算下次日期。')) return;
+      if (!confirm('確認「' + f.name + '」今日已更換？\n將依 ' + formatCycle(cycleVal, cycleUnit) + ' 計算下次日期。')) return;
       f.lastDate = todayISO(); f.nextDate = addCycle(f.lastDate, cycleVal, cycleUnit);
       f.updatedAt = new Date().toISOString(); await saveFilter(f);
       await loadFilters(); render(); showToast('下次：' + formatDate(f.nextDate)); checkDueFilters(true);
