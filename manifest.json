@@ -1,7 +1,7 @@
 {
   "name": "濾芯更換提醒系統",
   "short_name": "濾芯提醒",
-  "description": "專業過濾器濾心更換提醒系統，最多支援 7 道，離線可用",
+  "description": "專業過濾器濾心更換提醒系統，最多支援 10 道，離線可用",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

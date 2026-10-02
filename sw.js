@@ -1,9 +1,8 @@
-const CACHE = 'filter-reminder-v2';
+const CACHE = 'filter-reminder-v3';
 const ASSETS = [
   './',
   './index.html',
-  './manifest.json',
-  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js'
+  './manifest.json'
 ];
 
 self.addEventListener('install', (event) => {
