@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="description" content="濾芯更換提醒系統 - 專業離線 PWA，最多支援 7 道過濾器" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>濾芯更換提醒系統</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI0IiBmaWxsPSIjMWUzYTVmIi8+PGNpcmNsZSBjeD0iNjQiIGN5PSI2NCIgcj0iMjgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzNiODJmNiIgc3Ryb2tlLXdpZHRoPSI4Ii8+PHBhdGggZD0iTTY0IDM2djE2TTY0IDc2djE2TTM2IDY0aDE2TTc2IDY0aDE2IiBzdHJva2U9IiMzYjgyZjYiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    :root {
+      --bg-primary: #0b1220;
+      --bg-secondary: #111827;
+      --bg-card: #1a2332;
+      --bg-card-hover: #1f2a3d;
+      --border: #2a3649;
+      --border-light: #334155;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --accent-soft: rgba(59, 130, 246, 0.15);
+      --success: #10b981;
+      --success-soft: rgba(16, 185, 129, 0.15);
+      --warning: #f59e0b;
+      --warning-soft: rgba(245, 158, 11, 0.15);
+      --danger: #ef4444;
+      --danger-soft: rgba(239, 68, 68, 0.15);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+      --font: "Inter", "Noto Sans TC", "Microsoft JhengHei", system-ui, -apple-system, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      overflow-x: hidden;
+    }
+
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.55;
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 20px 48px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand { display: flex; align-items: center; gap: 14px; }
+
+    .brand-logo {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #1e3a5f, #3b82f6);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.35);
+    }
+
+    .brand-logo svg {
+      width: 24px; height: 24px;
+      fill: none; stroke: #fff; stroke-width: 2;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    .brand-text h1 {
+      font-size: 1.25rem; font-weight: 650;
+      letter-spacing: -0.02em; line-height: 1.2;
+    }
+
+    .brand-text p {
+      font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;
+    }
+
+    .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 8px; padding: 10px 16px; border-radius: var(--radius-sm);
+      font-size: 0.875rem; font-weight: 550; border: none;
+      cursor: pointer; transition: all 0.18s ease;
+      white-space: nowrap; font-family: inherit;
+    }
+
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card); color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--bg-card-hover); border-color: var(--border-light);
+    }
+
+    .btn-success {
+      background: var(--success-soft); color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .btn-success:hover:not(:disabled) {
+      background: rgba(16, 185, 129, 0.25);
+    }
+
+    .btn-danger {
+      background: transparent; color: var(--danger);
+      border: 1px solid transparent; padding: 8px 10px;
+    }
+    .btn-danger:hover:not(:disabled) {
+      background: var(--danger-soft); border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-sm { padding: 7px 12px; font-size: 0.8rem; }
+    .btn-icon { width: 36px; height: 36px; padding: 0; border-radius: 8px; }
+
+    .status-bar {
+      display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px;
+    }
+
+    .status-chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 14px; border-radius: 999px; font-size: 0.8rem;
+      font-weight: 500; background: var(--bg-card);
+      border: 1px solid var(--border); color: var(--text-secondary);
+    }
+
+    .status-chip .dot {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--text-muted);
+    }
+
+    .status-chip.online .dot { background: var(--success); }
+    .status-chip.offline .dot { background: var(--warning); }
+    .status-chip.notify-on .dot { background: var(--accent); }
+    .status-chip.notify-off .dot { background: var(--text-muted); }
+
+    .empty-state {
+      text-align: center; padding: 64px 24px;
+      background: var(--bg-card); border: 1px dashed var(--border);
+      border-radius: var(--radius);
+    }
+
+    .empty-state h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; }
+    .empty-state p {
+      color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 24px;
+      max-width: 360px; margin-left: auto; margin-right: auto; line-height: 1.5;
+    }
+
+    .filter-list { display: flex; flex-direction: column; gap: 14px; }
+
+    .filter-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 18px 20px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      position: relative; overflow: hidden;
+    }
+    .filter-card:hover { border-color: var(--border-light); box-shadow: var(--shadow); }
+    .filter-card.status-ok { border-left: 3px solid var(--success); }
+    .filter-card.status-soon { border-left: 3px solid var(--warning); }
+    .filter-card.status-overdue { border-left: 3px solid var(--danger); }
+
+    .filter-card-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 12px; margin-bottom: 14px;
+    }
+
+    .filter-title {
+      display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;
+    }
+
+    .filter-index {
+      flex-shrink: 0; width: 28px; height: 28px; border-radius: 6px;
+      background: var(--accent-soft); color: var(--accent);
+      font-size: 0.8rem; font-weight: 650;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .filter-name {
+      font-size: 1.05rem; font-weight: 600; letter-spacing: -0.01em;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .filter-badge {
+      flex-shrink: 0; font-size: 0.72rem; font-weight: 600;
+      padding: 4px 10px; border-radius: 999px; letter-spacing: 0.03em;
+    }
+    .badge-ok { background: var(--success-soft); color: var(--success); }
+    .badge-soon { background: var(--warning-soft); color: var(--warning); }
+    .badge-overdue { background: var(--danger-soft); color: var(--danger); }
+
+    .filter-meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px 20px; margin-bottom: 14px;
+    }
+
+    .meta-item label {
+      display: block; font-size: 0.72rem; color: var(--text-muted);
+      margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .meta-item span {
+      font-size: 0.9rem; color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+    }
+    .meta-item span.highlight { color: var(--text-primary); font-weight: 550; }
+
+    .filter-actions {
+      display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;
+      border-top: 1px solid var(--border); padding-top: 12px;
+    }
+
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(6px); z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px; opacity: 0; visibility: hidden;
+      transition: opacity 0.2s, visibility 0.2s;
+    }
+    .modal-overlay.open { opacity: 1; visibility: visible; }
+
+    .modal {
+      background: var(--bg-secondary); border: 1px solid var(--border);
+      border-radius: 16px; width: 100%; max-width: 460px;
+      max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+      transform: translateY(12px); transition: transform 0.25s ease;
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 22px 12px;
+    }
+    .modal-header h2 { font-size: 1.15rem; font-weight: 600; }
+
+    .modal-body { padding: 8px 22px 8px; }
+
+    .form-group { margin-bottom: 18px; }
+    .form-group label {
+      display: block; font-size: 0.82rem; font-weight: 550;
+      color: var(--text-secondary); margin-bottom: 6px;
+    }
+    .form-group input, .form-group select {
+      width: 100%; padding: 11px 14px; background: var(--bg-card);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text-primary); font-size: 0.95rem;
+      font-family: inherit; outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .form-group input:focus, .form-group select:focus {
+      border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+    .form-group input::placeholder { color: var(--text-muted); }
+    .form-group select { cursor: pointer; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center;
+      padding-right: 36px;
+    }
+
+    .form-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    }
+
+    .form-hint {
+      font-size: 0.75rem; color: var(--text-muted); margin-top: 5px;
+    }
+
+    .cycle-preview {
+      margin-top: 8px; padding: 10px 12px; border-radius: var(--radius-sm);
+      background: var(--accent-soft); border: 1px solid rgba(59, 130, 246, 0.25);
+      font-size: 0.82rem; color: var(--accent); display: none;
+    }
+    .cycle-preview.show { display: block; }
+
+    .modal-footer {
+      display: flex; gap: 10px; justify-content: flex-end;
+      padding: 16px 22px 22px;
+    }
+
+    .toast-container {
+      position: fixed; bottom: 24px; right: 24px; z-index: 200;
+      display: flex; flex-direction: column; gap: 10px; pointer-events: none;
+    }
+    .toast {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 14px 18px;
+      font-size: 0.875rem; box-shadow: var(--shadow);
+      animation: slideIn 0.3s ease; max-width: 320px; pointer-events: auto;
+    }
+    .toast.success { border-left: 3px solid var(--success); }
+    .toast.warning { border-left: 3px solid var(--warning); }
+    .toast.error { border-left: 3px solid var(--danger); }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .install-banner {
+      display: none; align-items: center; justify-content: space-between;
+      gap: 16px; padding: 14px 18px; margin-bottom: 20px;
+      background: linear-gradient(135deg, rgba(30, 58, 95, 0.9), rgba(37, 99, 235, 0.25));
+      border: 1px solid rgba(59, 130, 246, 0.35); border-radius: var(--radius);
+    }
+    .install-banner.show { display: flex; }
+    .install-banner p { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.4; }
+    .install-banner strong { color: var(--text-primary); }
+
+    footer {
+      margin-top: auto; padding-top: 32px; text-align: center;
+      font-size: 0.75rem; color: var(--text-muted);
+    }
+
+    @media (max-width: 600px) {
+      .app { padding: 16px 14px 40px; }
+      header { flex-direction: column; align-items: flex-start; }
+      .filter-meta { grid-template-columns: 1fr 1fr; }
+      .brand-text h1 { font-size: 1.1rem; }
+      .form-row { grid-template-columns: 1fr; }
+      .install-banner { flex-direction: column; align-items: stretch; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+            <circle cx="12" cy="12" r="4"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>濾芯更換提醒系統</h1>
+          <p>專業過濾器管理 · 最多 7 道</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary btn-sm" id="btn-install" type="button" style="display:none;">安裝應用</button>
+        <button class="btn btn-secondary btn-sm" id="btn-notify" type="button">啟用通知</button>
+        <button class="btn btn-primary" id="btn-add" type="button">新增濾芯</button>
+      </div>
+    </header>
+
+    <div class="install-banner" id="install-banner">
+      <p><strong>安裝至裝置</strong><br>可像原生 App 一樣從主畫面開啟，並支援離線使用。</p>
+      <button class="btn btn-primary btn-sm" id="btn-install-banner" type="button">立即安裝</button>
+    </div>
+
+    <div class="status-bar">
+      <div class="status-chip" id="chip-online">
+        <span class="dot"></span>
+        <span id="online-text">檢查連線中</span>
+      </div>
+      <div class="status-chip" id="chip-notify">
+        <span class="dot"></span>
+        <span id="notify-text">通知未啟用</span>
+      </div>
+      <div class="status-chip">
+        <span class="dot" style="background:var(--accent)"></span>
+        <span id="count-text">0 / 7 道濾芯</span>
+      </div>
+    </div>
+
+    <main>
+      <div id="empty-state" class="empty-state" style="display:none;">
+        <h2>尚未新增任何濾芯</h2>
+        <p>設定濾芯名稱、更換週期與最近更換日期，系統會自動計算下次更換日並在到期時提醒。資料儲存於本機，支援離線使用。</p>
+        <button class="btn btn-primary" id="btn-add-empty" type="button">新增第一道濾芯</button>
+      </div>
+      <div class="filter-list" id="filter-list"></div>
+    </main>
+
+    <footer>
+      濾芯更換提醒系統 · 資料僅儲存於本機瀏覽器 · 支援離線運作與安裝
+    </footer>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h2 id="modal-title">新增濾芯</h2>
+        <button class="btn btn-secondary btn-icon" id="btn-close-modal" type="button" aria-label="關閉">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="input-name">濾芯名稱</label>
+          <input type="text" id="input-name" placeholder="例如：第一道 PP 棉濾芯" maxlength="60" autocomplete="off" />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="input-cycle-value">更換週期</label>
+            <input type="number" id="input-cycle-value" min="1" max="3650" placeholder="例如：90" />
+          </div>
+          <div class="form-group">
+            <label for="input-cycle-unit">單位</label>
+            <select id="input-cycle-unit">
+              <option value="day">天</option>
+              <option value="month" selected>個月</option>
+              <option value="year">年</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="input-last">最近更換日期</label>
+          <input type="date" id="input-last" />
+          <p class="form-hint">填寫後系統會依週期自動計算下次更換日</p>
+        </div>
+
+        <div class="form-group">
+          <label for="input-next">下次更換日期</label>
+          <input type="date" id="input-next" />
+          <p class="form-hint">可手動調整；修改週期或最近更換日時會自動重算</p>
+          <div class="cycle-preview" id="cycle-preview"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btn-cancel" type="button">取消</button>
+        <button class="btn btn-primary" id="btn-save" type="button">儲存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script>
+    // ============================================================
+    // Constants & State
+    // ============================================================
+    const MAX_FILTERS = 7;
+    const DB_NAME = 'FilterReminderDB';
+    const DB_VERSION = 2;
+    const STORE_NAME = 'filters';
+    const CHECK_INTERVAL_MS = 60 * 1000;
+
+    let db = null;
+    let filters = [];
+    let editingId = null;
+    let notifyPermission = 'default';
+    let deferredInstallPrompt = null;
+    let autoCalcEnabled = true; // when true, changing last/cycle updates next
+
+    // ============================================================
+    // IndexedDB
+    // ============================================================
+    function openDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(DB_NAME, DB_VERSION);
+        req.onerror = () => reject(req.error);
+        req.onsuccess = () => resolve(req.result);
+        req.onupgradeneeded = (e) => {
+          const database = e.target.result;
+          if (!database.objectStoreNames.contains(STORE_NAME)) {
+            const store = database.createObjectStore(STORE_NAME, { keyPath: 'id' });
+            store.createIndex('nextDate', 'nextDate', { unique: false });
+          }
+        };
+      });
+    }
+
+    async function loadFilters() {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.getAll();
+        req.onsuccess = () => {
+          filters = (req.result || []).sort((a, b) => a.order - b.order);
+          resolve(filters);
+        };
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function saveFilter(filter) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.put(filter);
+        req.onsuccess = () => resolve();
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function deleteFilter(id) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.delete(id);
+        req.onsuccess = () => resolve();
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    // ============================================================
+    // Date / Cycle helpers
+    // ============================================================
+    function uid() {
+      return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    }
+
+    function todayISO() {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function formatDate(iso) {
+      if (!iso) return '—';
+      const d = new Date(iso + 'T00:00:00');
+      if (isNaN(d)) return '—';
+      return d.toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit' });
+    }
+
+    function daysUntil(iso) {
+      if (!iso) return null;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const target = new Date(iso + 'T00:00:00');
+      return Math.round((target - today) / 86400000);
+    }
+
+    /** Add cycle to a date string, return new ISO date */
+    function addCycle(isoDate, value, unit) {
+      if (!isoDate || !value || value < 1) return '';
+      const d = new Date(isoDate + 'T00:00:00');
+      if (isNaN(d)) return '';
+      const v = parseInt(value, 10);
+      if (unit === 'day') {
+        d.setDate(d.getDate() + v);
+      } else if (unit === 'month') {
+        d.setMonth(d.getMonth() + v);
+      } else if (unit === 'year') {
+        d.setFullYear(d.getFullYear() + v);
+      }
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function formatCycle(value, unit) {
+      if (!value) return '—';
+      const u = unit === 'day' ? '天' : unit === 'month' ? '個月' : '年';
+      return `每 ${value} ${u}`;
+    }
+
+    function getStatus(filter) {
+      const days = daysUntil(filter.nextDate);
+      if (days === null) return { key: 'ok', label: '正常', class: 'status-ok', badge: 'badge-ok' };
+      if (days < 0) return { key: 'overdue', label: '已逾期', class: 'status-overdue', badge: 'badge-overdue' };
+      if (days <= 7) return { key: 'soon', label: '即將到期', class: 'status-soon', badge: 'badge-soon' };
+      return { key: 'ok', label: '正常', class: 'status-ok', badge: 'badge-ok' };
+    }
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const el = document.createElement('div');
+      el.className = `toast ${type}`;
+      el.textContent = message;
+      container.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transition = 'opacity 0.3s';
+        setTimeout(() => el.remove(), 300);
+      }, 3200);
+    }
+
+    // ============================================================
+    // Auto-calc next date in form
+    // ============================================================
+    function updateNextFromCycle() {
+      if (!autoCalcEnabled) return;
+      const last = document.getElementById('input-last').value;
+      const value = document.getElementById('input-cycle-value').value;
+      const unit = document.getElementById('input-cycle-unit').value;
+      const nextInput = document.getElementById('input-next');
+      const preview = document.getElementById('cycle-preview');
+
+      if (last && value) {
+        const next = addCycle(last, value, unit);
+        nextInput.value = next;
+        preview.textContent = `自動計算：${formatDate(last)} + ${formatCycle(value, unit)} = ${formatDate(next)}`;
+        preview.classList.add('show');
+      } else {
+        preview.classList.remove('show');
+      }
+    }
+
+    // ============================================================
+    // Notifications
+    // ============================================================
+    function updateNotifyUI() {
+      const chip = document.getElementById('chip-notify');
+      const text = document.getElementById('notify-text');
+      const btn = document.getElementById('btn-notify');
+      if (!('Notification' in window)) {
+        text.textContent = '瀏覽器不支援通知';
+        chip.className = 'status-chip notify-off';
+        btn.disabled = true;
+        return;
+      }
+      notifyPermission = Notification.permission;
+      if (notifyPermission === 'granted') {
+        text.textContent = '通知已啟用';
+        chip.className = 'status-chip notify-on';
+        btn.textContent = '通知已啟用';
+        btn.disabled = true;
+      } else if (notifyPermission === 'denied') {
+        text.textContent = '通知被拒絕';
+        chip.className = 'status-chip notify-off';
+        btn.textContent = '通知被拒絕';
+        btn.disabled = true;
+      } else {
+        text.textContent = '通知未啟用';
+        chip.className = 'status-chip notify-off';
+        btn.textContent = '啟用通知';
+        btn.disabled = false;
+      }
+    }
+
+    async function requestNotify() {
+      if (!('Notification' in window)) {
+        showToast('此瀏覽器不支援系統通知', 'error');
+        return;
+      }
+      try {
+        const result = await Notification.requestPermission();
+        notifyPermission = result;
+        updateNotifyUI();
+        if (result === 'granted') {
+          showToast('通知權限已開啟，到期時將提醒您');
+          checkDueFilters(true);
+        } else {
+          showToast('通知權限未授予', 'warning');
+        }
+      } catch (e) {
+        showToast('無法請求通知權限', 'error');
+      }
+    }
+
+    function sendNotification(title, body) {
+      if (notifyPermission !== 'granted') return;
+      try {
+        const n = new Notification(title, {
+          body,
+          icon: createIconDataUrl(),
+          badge: createIconDataUrl(),
+          tag: 'filter-reminder',
+          renotify: true
+        });
+        n.onclick = () => { window.focus(); n.close(); };
+      } catch (e) {
+        console.warn('Notification failed', e);
+      }
+    }
+
+    function createIconDataUrl() {
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" rx="24" fill="#1e3a5f"/><circle cx="64" cy="64" r="28" fill="none" stroke="#3b82f6" stroke-width="8"/><path d="M64 36v16M64 76v16M36 64h16M76 64h16" stroke="#3b82f6" stroke-width="6" stroke-linecap="round"/></svg>`;
+      return 'data:image/svg+xml;base64,' + btoa(svg);
+    }
+
+    let lastNotified = {};
+
+    function checkDueFilters(force = false) {
+      const todayStr = todayISO();
+      filters.forEach(f => {
+        if (!f.nextDate) return;
+        const days = daysUntil(f.nextDate);
+        const key = f.id + ':' + f.nextDate;
+        if (days <= 0 && (force || lastNotified[key] !== todayStr)) {
+          const status = days < 0 ? '已逾期' : '今日到期';
+          sendNotification(
+            `濾芯提醒：${f.name}`,
+            `${status} · 建議儘速更換（下次更換日：${formatDate(f.nextDate)}）`
+          );
+          lastNotified[key] = todayStr;
+        } else if (days > 0 && days <= 3 && (force || lastNotified[key] !== todayStr)) {
+          sendNotification(
+            `濾芯即將到期：${f.name}`,
+            `還有 ${days} 天需要更換（${formatDate(f.nextDate)}）`
+          );
+          lastNotified[key] = todayStr;
+        }
+      });
+    }
+
+    // ============================================================
+    // Online status
+    // ============================================================
+    function updateOnlineUI() {
+      const chip = document.getElementById('chip-online');
+      const text = document.getElementById('online-text');
+      if (navigator.onLine) {
+        chip.className = 'status-chip online';
+        text.textContent = '線上模式';
+      } else {
+        chip.className = 'status-chip offline';
+        text.textContent = '離線模式（資料本機可用）';
+      }
+    }
+
+    // ============================================================
+    // PWA Install
+    // ============================================================
+    function updateInstallUI() {
+      const btn = document.getElementById('btn-install');
+      const banner = document.getElementById('install-banner');
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+        || window.navigator.standalone === true;
+
+      if (isStandalone) {
+        btn.style.display = 'none';
+        banner.classList.remove('show');
+        return;
+      }
+
+      if (deferredInstallPrompt) {
+        btn.style.display = '';
+        banner.classList.add('show');
+      } else {
+        // iOS / browsers without beforeinstallprompt: still show tip
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        if (isIOS) {
+          btn.style.display = 'none';
+          banner.querySelector('p').innerHTML =
+            '<strong>安裝至主畫面</strong><br>使用 Safari 開啟，點分享按鈕後選擇「加入主畫面」。';
+          banner.classList.add('show');
+          document.getElementById('btn-install-banner').style.display = 'none';
+        }
+      }
+    }
+
+    async function triggerInstall() {
+      if (!deferredInstallPrompt) {
+        showToast('請使用瀏覽器選單中的「安裝應用程式」功能', 'warning');
+        return;
+      }
+      deferredInstallPrompt.prompt();
+      const { outcome } = await deferredInstallPrompt.userChoice;
+      if (outcome === 'accepted') {
+        showToast('應用程式已安裝');
+      }
+      deferredInstallPrompt = null;
+      updateInstallUI();
+    }
+
+    // ============================================================
+    // Render
+    // ============================================================
+    function render() {
+      const list = document.getElementById('filter-list');
+      const empty = document.getElementById('empty-state');
+      const countText = document.getElementById('count-text');
+      const btnAdd = document.getElementById('btn-add');
+
+      countText.textContent = `${filters.length} / ${MAX_FILTERS} 道濾芯`;
+      btnAdd.disabled = filters.length >= MAX_FILTERS;
+
+      if (filters.length === 0) {
+        empty.style.display = 'block';
+        list.innerHTML = '';
+        return;
+      }
+      empty.style.display = 'none';
+
+      list.innerHTML = filters.map((f, i) => {
+        const st = getStatus(f);
+        const days = daysUntil(f.nextDate);
+        let remainText = '—';
+        if (days !== null) {
+          if (days < 0) remainText = `已逾期 ${Math.abs(days)} 天`;
+          else if (days === 0) remainText = '今日到期';
+          else remainText = `剩餘 ${days} 天`;
+        }
+        const cycleText = formatCycle(f.cycleValue, f.cycleUnit || 'month');
+        return `
+          <article class="filter-card ${st.class}" data-id="${f.id}">
+            <div class="filter-card-header">
+              <div class="filter-title">
+                <span class="filter-index">${i + 1}</span>
+                <span class="filter-name">${escapeHtml(f.name)}</span>
+              </div>
+              <span class="filter-badge ${st.badge}">${st.label}</span>
+            </div>
+            <div class="filter-meta">
+              <div class="meta-item">
+                <label>更換週期</label>
+                <span>${cycleText}</span>
+              </div>
+              <div class="meta-item">
+                <label>最近更換</label>
+                <span>${formatDate(f.lastDate)}</span>
+              </div>
+              <div class="meta-item">
+                <label>下次更換</label>
+                <span class="highlight">${formatDate(f.nextDate)}</span>
+              </div>
+              <div class="meta-item">
+                <label>剩餘天數</label>
+                <span class="highlight">${remainText}</span>
+              </div>
+            </div>
+            <div class="filter-actions">
+              <button class="btn btn-success btn-sm btn-replaced" data-id="${f.id}" type="button">已更換</button>
+              <button class="btn btn-secondary btn-sm btn-edit" data-id="${f.id}" type="button">編輯</button>
+              <button class="btn btn-danger btn-sm btn-delete" data-id="${f.id}" type="button">刪除</button>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      list.querySelectorAll('.btn-edit').forEach(btn => {
+        btn.addEventListener('click', () => openModal(btn.dataset.id));
+      });
+      list.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', () => handleDelete(btn.dataset.id));
+      });
+      list.querySelectorAll('.btn-replaced').forEach(btn => {
+        btn.addEventListener('click', () => handleReplaced(btn.dataset.id));
+      });
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // ============================================================
+    // Modal
+    // ============================================================
+    function openModal(id = null) {
+      editingId = id;
+      autoCalcEnabled = true;
+      const overlay = document.getElementById('modal-overlay');
+      const title = document.getElementById('modal-title');
+      const nameInput = document.getElementById('input-name');
+      const cycleVal = document.getElementById('input-cycle-value');
+      const cycleUnit = document.getElementById('input-cycle-unit');
+      const lastInput = document.getElementById('input-last');
+      const nextInput = document.getElementById('input-next');
+      const preview = document.getElementById('cycle-preview');
+      preview.classList.remove('show');
+
+      if (id) {
+        const f = filters.find(x => x.id === id);
+        if (!f) return;
+        title.textContent = '編輯濾芯';
+        nameInput.value = f.name;
+        cycleVal.value = f.cycleValue || '';
+        cycleUnit.value = f.cycleUnit || 'month';
+        lastInput.value = f.lastDate || '';
+        nextInput.value = f.nextDate || '';
+        autoCalcEnabled = false; // don't overwrite existing next on open
+      } else {
+        if (filters.length >= MAX_FILTERS) {
+          showToast(`最多只能新增 ${MAX_FILTERS} 道濾芯`, 'warning');
+          return;
+        }
+        title.textContent = '新增濾芯';
+        nameInput.value = '';
+        cycleVal.value = '3';
+        cycleUnit.value = 'month';
+        lastInput.value = todayISO();
+        nextInput.value = '';
+        autoCalcEnabled = true;
+        updateNextFromCycle();
+      }
+      overlay.classList.add('open');
+      setTimeout(() => nameInput.focus(), 100);
+    }
+
+    function closeModal() {
+      document.getElementById('modal-overlay').classList.remove('open');
+      editingId = null;
+    }
+
+    async function handleSave() {
+      const name = document.getElementById('input-name').value.trim();
+      const cycleValue = parseInt(document.getElementById('input-cycle-value').value, 10);
+      const cycleUnit = document.getElementById('input-cycle-unit').value;
+      const lastDate = document.getElementById('input-last').value;
+      let nextDate = document.getElementById('input-next').value;
+
+      if (!name) {
+        showToast('請輸入濾芯名稱', 'warning');
+        return;
+      }
+      if (!cycleValue || cycleValue < 1) {
+        showToast('請設定有效的更換週期', 'warning');
+        return;
+      }
+      if (!lastDate) {
+        showToast('請填寫最近更換日期', 'warning');
+        return;
+      }
+      // Auto-fill next if empty
+      if (!nextDate) {
+        nextDate = addCycle(lastDate, cycleValue, cycleUnit);
+      }
+      if (!nextDate) {
+        showToast('請設定下次更換日期', 'warning');
+        return;
+      }
+
+      if (editingId) {
+        const f = filters.find(x => x.id === editingId);
+        if (!f) return;
+        f.name = name;
+        f.cycleValue = cycleValue;
+        f.cycleUnit = cycleUnit;
+        f.lastDate = lastDate;
+        f.nextDate = nextDate;
+        f.updatedAt = new Date().toISOString();
+        await saveFilter(f);
+        showToast('濾芯資料已更新');
+      } else {
+        const f = {
+          id: uid(),
+          name,
+          cycleValue,
+          cycleUnit,
+          lastDate,
+          nextDate,
+          order: filters.length,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        await saveFilter(f);
+        filters.push(f);
+        showToast('濾芯已新增');
+      }
+      await loadFilters();
+      render();
+      closeModal();
+      checkDueFilters(true);
+    }
+
+    async function handleDelete(id) {
+      const f = filters.find(x => x.id === id);
+      if (!f) return;
+      if (!confirm(`確定要刪除「${f.name}」嗎？此操作無法復原。`)) return;
+      await deleteFilter(id);
+      await loadFilters();
+      filters.forEach((item, idx) => {
+        item.order = idx;
+        saveFilter(item);
+      });
+      render();
+      showToast('濾芯已刪除');
+    }
+
+    /** Mark as replaced today: lastDate = today, nextDate = today + cycle */
+    async function handleReplaced(id) {
+      const f = filters.find(x => x.id === id);
+      if (!f) return;
+      const cycleVal = f.cycleValue || 3;
+      const cycleUnit = f.cycleUnit || 'month';
+      if (!confirm(`確認「${f.name}」已於今日更換？\n系統將以今天為基準，依週期（${formatCycle(cycleVal, cycleUnit)}）自動計算下次更換日。`)) return;
+
+      f.lastDate = todayISO();
+      f.nextDate = addCycle(f.lastDate, cycleVal, cycleUnit);
+      f.updatedAt = new Date().toISOString();
+      await saveFilter(f);
+      await loadFilters();
+      render();
+      showToast(`已記錄更換，下次更換日：${formatDate(f.nextDate)}`);
+      checkDueFilters(true);
+    }
+
+    // ============================================================
+    // Three.js Background
+    // ============================================================
+    function initThreeBG() {
+      const canvas = document.getElementById('bg-canvas');
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setClearColor(0x000000, 0);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+      camera.position.z = 18;
+
+      const count = 180;
+      const positions = new Float32Array(count * 3);
+      const velocities = [];
+      for (let i = 0; i < count; i++) {
+        positions[i * 3] = (Math.random() - 0.5) * 40;
+        positions[i * 3 + 1] = (Math.random() - 0.5) * 30;
+        positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
+        velocities.push({
+          x: (Math.random() - 0.5) * 0.008,
+          y: (Math.random() - 0.5) * 0.006,
+          z: (Math.random() - 0.5) * 0.004
+        });
+      }
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const material = new THREE.PointsMaterial({
+        color: 0x3b82f6, size: 0.12, transparent: true, opacity: 0.55,
+        sizeAttenuation: true, depthWrite: false, blending: THREE.AdditiveBlending
+      });
+      const points = new THREE.Points(geometry, material);
+      scene.add(points);
+
+      const torusGeo = new THREE.TorusGeometry(6, 0.08, 8, 64);
+      const torusMat = new THREE.MeshBasicMaterial({
+        color: 0x2563eb, transparent: true, opacity: 0.18, wireframe: true
+      });
+      const torus = new THREE.Mesh(torusGeo, torusMat);
+      torus.rotation.x = Math.PI / 3;
+      scene.add(torus);
+
+      const torus2 = torus.clone();
+      torus2.scale.set(0.7, 0.7, 0.7);
+      torus2.material = torusMat.clone();
+      torus2.material.opacity = 0.12;
+      torus2.material.color.set(0x60a5fa);
+      scene.add(torus2);
+
+      let time = 0;
+      function animate() {
+        requestAnimationFrame(animate);
+        time += 0.004;
+        const pos = geometry.attributes.position.array;
+        for (let i = 0; i < count; i++) {
+          pos[i * 3] += velocities[i].x;
+          pos[i * 3 + 1] += velocities[i].y;
+          pos[i * 3 + 2] += velocities[i].z;
+          if (Math.abs(pos[i * 3]) > 22) velocities[i].x *= -1;
+          if (Math.abs(pos[i * 3 + 1]) > 16) velocities[i].y *= -1;
+          if (Math.abs(pos[i * 3 + 2]) > 12) velocities[i].z *= -1;
+        }
+        geometry.attributes.position.needsUpdate = true;
+        torus.rotation.z = time * 0.15;
+        torus.rotation.y = time * 0.08;
+        torus2.rotation.z = -time * 0.2;
+        torus2.rotation.x = Math.PI / 3 + time * 0.05;
+        points.rotation.y = time * 0.03;
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    }
+
+    // ============================================================
+    // Service Worker
+    // ============================================================
+    function registerSW() {
+      if (!('serviceWorker' in navigator)) return;
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('SW registered', reg.scope))
+        .catch(err => {
+          // Fallback: inline blob SW for single-file scenarios
+          console.warn('sw.js failed, trying blob SW', err);
+          const swCode = `
+            const CACHE = 'filter-reminder-v2-blob';
+            self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./','./index.html'])).then(() => self.skipWaiting())); });
+            self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
+            self.addEventListener('fetch', e => {
+              e.respondWith(caches.match(e.request).then(c => c || fetch(e.request).catch(() => c)));
+            });
+          `;
+          const blob = new Blob([swCode], { type: 'application/javascript' });
+          navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
+        });
+    }
+
+    // ============================================================
+    // Init
+    // ============================================================
+    async function init() {
+      try {
+        db = await openDB();
+        await loadFilters();
+        render();
+      } catch (e) {
+        console.error(e);
+        showToast('資料庫初始化失敗，將使用記憶體模式', 'error');
+      }
+
+      updateOnlineUI();
+      updateNotifyUI();
+      updateInstallUI();
+      checkDueFilters(true);
+
+      // Form auto-calc listeners
+      document.getElementById('input-last').addEventListener('change', () => {
+        autoCalcEnabled = true;
+        updateNextFromCycle();
+      });
+      document.getElementById('input-cycle-value').addEventListener('input', () => {
+        autoCalcEnabled = true;
+        updateNextFromCycle();
+      });
+      document.getElementById('input-cycle-unit').addEventListener('change', () => {
+        autoCalcEnabled = true;
+        updateNextFromCycle();
+      });
+      // If user manually edits next date, stop auto overwrite until cycle/last changes
+      document.getElementById('input-next').addEventListener('change', () => {
+        autoCalcEnabled = false;
+        document.getElementById('cycle-preview').classList.remove('show');
+      });
+
+      document.getElementById('btn-add').addEventListener('click', () => openModal());
+      document.getElementById('btn-add-empty').addEventListener('click', () => openModal());
+      document.getElementById('btn-notify').addEventListener('click', requestNotify);
+      document.getElementById('btn-install').addEventListener('click', triggerInstall);
+      document.getElementById('btn-install-banner').addEventListener('click', triggerInstall);
+      document.getElementById('btn-close-modal').addEventListener('click', closeModal);
+      document.getElementById('btn-cancel').addEventListener('click', closeModal);
+      document.getElementById('btn-save').addEventListener('click', handleSave);
+      document.getElementById('modal-overlay').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeModal();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+      });
+
+      window.addEventListener('online', updateOnlineUI);
+      window.addEventListener('offline', updateOnlineUI);
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        updateInstallUI();
+      });
+
+      window.addEventListener('appinstalled', () => {
+        deferredInstallPrompt = null;
+        updateInstallUI();
+        showToast('應用程式已成功安裝');
+      });
+
+      setInterval(() => checkDueFilters(false), CHECK_INTERVAL_MS);
+
+      if (typeof THREE !== 'undefined') initThreeBG();
+      registerSW();
+    }
+
+    init();
+  </script>
+</body>
+</html>
